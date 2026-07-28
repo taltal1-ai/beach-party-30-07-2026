@@ -362,7 +362,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYSvYFTkCMLYFhaRPz3LQyzH2f2lukLbw",
@@ -551,24 +551,24 @@ document.getElementById('freeInput').addEventListener('keydown', e => { if (e.ke
 
 window.signup = async function(id) {
   if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return; }
-  const item = ITEMS.find(i => i.id === id);
+  const item = getAllItems().find(i => i.id === id);
+  if (!item) return;
   const current = state[id] || [];
   const currentNames = current.map(e => typeof e === 'object' ? e.name : e);
   if (currentNames.includes(currentUser)) { showToast('כבר נרשמת לפריט הזה!'); return; }
   const effS = (slotsState && slotsState[id] != null) ? slotsState[id] : item.slots;
   if (current.length >= effS) { showToast('אין יותר מקומות פנויים 😔'); return; }
   const entry = { name: currentUser, ts: Date.now() };
-  await setDoc(docRef, { ...state, [id]: [...current, entry] });
+  // arrayUnion מוסיף בצד השרת — שני אנשים שנרשמים באותו רגע לא דורסים זה את זה
+  await updateDoc(docRef, { [id]: arrayUnion(entry) });
   showToast('נרשמת! תודה ' + currentUser + ' 💚');
 };
 
 window.cancel = async function(id) {
   if (!currentUser) return;
-  const updated = (state[id] || []).filter(e => {
-    const name = typeof e === 'object' ? e.name : e;
-    return name !== currentUser;
-  });
-  await setDoc(docRef, { ...state, [id]: updated });
+  const mine = (state[id] || []).filter(e => (typeof e === 'object' ? e.name : e) === currentUser);
+  if (!mine.length) return;
+  await updateDoc(docRef, { [id]: arrayRemove(...mine) });
   showToast('ביטול הרשמה');
 };
 
@@ -578,7 +578,7 @@ window.addFreeItem = async function() {
   const val = document.getElementById('freeInput').value.trim();
   if (!val) { showToast('כתבו מה אתם רוצים להביא'); return; }
   const newItem = { id: Date.now().toString(), text: val, who: currentUser, ts: Date.now(), note: '' };
-  await setDoc(freeRef, { items: [...freeItems, newItem] });
+  await updateDoc(freeRef, { items: arrayUnion(newItem) });
   document.getElementById('freeInput').value = '';
   showToast('נוסף! 🎉');
 };
@@ -592,6 +592,13 @@ window.deleteFreeItem = async function(id) {
   await setDoc(freeRef, { items: freeItems.filter(i => i.id !== id) });
 };
 
+// כל טקסט שמשתמש הקליד עובר דרך כאן לפני שהוא נכנס ל-innerHTML.
+// בלי זה, שם עם < או " שובר את העימוד (ובמקרה הגרוע מריץ קוד).
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 function getAllItems() {
   return [...ITEMS, ...extraItems.map(e => ({ id: e.id, cat: e.cat || '➕ נוסף', name: e.name, slots: e.slots || 1 }))];
 }
@@ -602,7 +609,7 @@ function renderItems() {
   document.getElementById('itemsContainer').innerHTML = cats.map(cat => {
     const catItems = allItems.filter(i => i.cat === cat);
     return `<div class="category">
-      <div class="category-title">${cat}</div>
+      <div class="category-title">${esc(cat)}</div>
       ${catItems.map(item => renderItem(item)).join('')}
     </div>`;
   }).join('');
@@ -621,9 +628,9 @@ function renderItem(item) {
   const canCancel = isMeIn && myEntry && myEntry.ts && myEntry.ts > 0 && (Date.now() - myEntry.ts) < 60000;
   const pct = Math.round((filled / effectiveSlots) * 100);
   const tagsHtml = volunteers.length > 0
-    ? `<div class="volunteers">${volunteers.map(n => `<span class="volunteer-tag ${n === currentUser ? 'is-me' : ''}">${n}</span>`).join('')}</div>` : '';
+    ? `<div class="volunteers">${volunteers.map(n => `<span class="volunteer-tag ${n === currentUser ? 'is-me' : ''}">${esc(n)}</span>`).join('')}</div>` : '';
   const noteText = itemNotes[item.id] || '';
-  const noteHtml = (noteText && currentUser === 'מנהל') ? `<div style="font-size:0.78rem;color:var(--brown);margin-top:0.4rem">📝 ${noteText}</div>` : '';
+  const noteHtml = (noteText && currentUser === 'מנהל') ? `<div style="font-size:0.78rem;color:var(--brown);margin-top:0.4rem">📝 ${esc(noteText)}</div>` : '';
   const isAdmin = currentUser === 'מנהל';
   let btnHtml = isAdmin
     ? ''
@@ -638,7 +645,7 @@ function renderItem(item) {
   const adminBtn = isAdmin ? `<button class="admin-edit-btn" onclick="openAdminEdit('${item.id}')">✏️ עריכה</button>${isExtra ? `<button class="admin-edit-btn" style="color:var(--red-soft);border-color:var(--red-soft)" onclick="deleteExtraItem('${item.id}')">🗑️</button>` : ''}` : '';
   return `<div class="item-card ${isFull ? 'full' : ''}" id="item-card-${item.id}">
     <div class="item-top">
-      <span class="item-name">${item.name}</span>
+      <span class="item-name">${esc(item.name)}</span>
       <span class="slots-badge">${filled}/${effectiveSlots}</span>
       <span style="display:flex;gap:0.4rem">${btnHtml}${adminBtn}</span>
     </div>
@@ -660,12 +667,12 @@ function renderFreeItems() {
     const isMe = item.who === currentUser;
     const withinMinute = isMe && item.ts && item.ts > 0 && (Date.now() - item.ts) < 60000;
     const canEdit = withinMinute || isAdminUser;
-    const noteDisplay = (item.note && currentUser === 'מנהל') ? `<div style="font-size:0.75rem;color:var(--brown);margin-top:0.2rem;width:100%">📝 ${item.note}</div>` : '';
+    const noteDisplay = (item.note && currentUser === 'מנהל') ? `<div style="font-size:0.75rem;color:var(--brown);margin-top:0.2rem;width:100%">📝 ${esc(item.note)}</div>` : '';
     return `<div class="free-item" id="free-item-${item.id}" style="flex-wrap:wrap">
-      <span class="free-item-text">${item.text}</span>
-      <span class="free-item-who">👤 ${item.who}</span>
+      <span class="free-item-text">${esc(item.text)}</span>
+      <span class="free-item-who">👤 ${esc(item.who)}</span>
       ${canEdit ? `
-        <button class="free-edit-btn" onclick="startEditFreeItem('${item.id}', '${item.text.replace(/'/g, "\\'")}', '${item.who.replace(/'/g, "\\'")}', ${isAdminUser}, '${(item.note||'').replace(/'/g, "\\'")}')" title="עריכה">✏️</button>
+        <button class="free-edit-btn" onclick="startEditFreeItem('${item.id}')" title="עריכה">✏️</button>
         <button class="free-delete-btn" onclick="deleteFreeItem('${item.id}')">✕</button>
       ` : ''}
       ${noteDisplay}
@@ -705,20 +712,22 @@ window.saveEditName = async function(id) {
   showToast('השם עודכן ל־' + newName + ' ✅');
 };
 
-window.startEditFreeItem = function(id, currentText, currentWho, isAdmin, currentNote) {
+window.startEditFreeItem = function(id) {
   const div = document.getElementById('free-item-' + id);
-  if (!div) return;
-  const isAdminBool = isAdmin === true || isAdmin === 'true';
+  const it = freeItems.find(i => i.id === id);
+  if (!div || !it) return;
+  const currentText = it.text, currentWho = it.who, currentNote = it.note || '';
+  const isAdminBool = currentUser === 'מנהל';
   const whoField = isAdminBool
-    ? `<input class="free-input" style="width:110px;flex:none" value="${currentWho}" id="edit-who-${id}" placeholder="שם מתנדב" />`
+    ? `<input class="free-input" style="width:110px;flex:none" value="${esc(currentWho)}" id="edit-who-${id}" placeholder="שם מתנדב" />`
     : '';
   const noteField = isAdminBool
-    ? `<input class="free-input" style="width:100%;margin-top:0.4rem" value="${currentNote || ''}" id="edit-note-${id}" placeholder="📝 הערה (אופציונלי)..." />`
+    ? `<input class="free-input" style="width:100%;margin-top:0.4rem" value="${esc(currentNote)}" id="edit-note-${id}" placeholder="📝 הערה (אופציונלי)..." />`
     : '';
   div.innerHTML = `
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;width:100%">
       ${whoField}
-      <input class="free-input" style="flex:1;min-width:120px" value="${currentText}" id="edit-input-${id}" placeholder="מה מביאים?" />
+      <input class="free-input" style="flex:1;min-width:120px" value="${esc(currentText)}" id="edit-input-${id}" placeholder="מה מביאים?" />
       <button class="free-add-btn" onclick="saveEditFreeItem('${id}', ${isAdminBool})">שמור</button>
       <button class="free-delete-btn" style="margin-right:0.3rem" onclick="renderFreeItems()">ביטול</button>
     </div>
@@ -814,8 +823,8 @@ function renderReport() {
       ? '<span class="badge-full">✅ מלא</span>'
       : '<span class="badge-missing">⚠️ חסרים</span>';
     const colMap = {
-      name: item.name, volunteers: names,
-      registered: v.length, needed: effSlots, status: badge, notes: itemNotes[item.id] || ''
+      name: esc(item.name), volunteers: esc(names),
+      registered: v.length, needed: effSlots, status: badge, notes: esc(itemNotes[item.id] || '')
     };
     const tds = ALL_COLS.filter(c => activeCols.includes(c.key) || c.always)
       .map(c => `<td${c.key === 'registered' ? ' class="col-registered"' : ''}${c.key === 'status' || c.key === 'registered' || c.key === 'needed' ? ' style="text-align:center"' : ''}>${colMap[c.key]}</td>`).join('');
@@ -824,7 +833,7 @@ function renderReport() {
   if (freeItems.length > 0) {
     rows += '<tr><td colspan="5" style="background:#fff8e1;font-weight:700;padding:0.6rem 0.7rem;border-top:2px solid var(--sand)">✨ הוספות חופשיות</td></tr>';
     rows += freeItems.map(item =>
-      '<tr><td>' + item.text + '</td><td>' + item.who + '</td><td colspan="3"></td></tr>'
+      '<tr><td>' + esc(item.text) + '</td><td>' + esc(item.who) + '</td><td colspan="3"></td></tr>'
     ).join('');
   }
   tbody.innerHTML = rows;
@@ -900,7 +909,7 @@ window.openAddItemModal = function() {
   // Populate categories
   const allCats = [...new Set(getAllItems().map(i => i.cat))];
   const select = document.getElementById('newItemCatSelect');
-  select.innerHTML = allCats.map(c => `<option value="${c}">${c}</option>`).join('') +
+  select.innerHTML = allCats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('') +
     '<option value="__new__">➕ קטגוריה חדשה...</option>';
   select.value = allCats[0] || '__new__';
   const newCatRow = document.getElementById('newCatRow');
@@ -952,7 +961,8 @@ let adminCurrentId = null;
 
 window.openAdminEdit = function(id) {
   adminCurrentId = id;
-  const item = ITEMS.find(i => i.id === id);
+  const item = getAllItems().find(i => i.id === id);
+  if (!item) return;
   const rawVols = state[id] || [];
   const volunteers = rawVols.map(e => typeof e === 'object' ? e.name : e);
   const currentSlots = (slotsState && slotsState[id] != null) ? slotsState[id] : item.slots;
@@ -965,7 +975,7 @@ window.openAdminEdit = function(id) {
     const val = volunteers[i] || '';
     nameRowsHtml += `<div class="admin-name-row">
       <span class="admin-name-label">מתנדב ${i+1}:</span>
-      <input class="admin-name-input" id="admin-name-${id}-${i}" value="${val}" placeholder="ריק – אין מתנדב" />
+      <input class="admin-name-input" id="admin-name-${id}-${i}" value="${esc(val)}" placeholder="ריק – אין מתנדב" />
     </div>`;
   }
   const slotsRow = `<div class="admin-name-row" style="margin-bottom:1rem;padding-bottom:0.8rem;border-bottom:2px solid var(--sand)">
@@ -974,7 +984,7 @@ window.openAdminEdit = function(id) {
   </div>`;
   const noteRow = `<div class="admin-name-row" style="margin-top:0.8rem;padding-top:0.8rem;border-top:2px solid var(--sand)">
     <span class="admin-name-label">📝 הערה:</span>
-    <input class="admin-name-input" id="admin-note-${id}" value="${currentNote}" placeholder="הערה לפריט זה..." />
+    <input class="admin-name-input" id="admin-note-${id}" value="${esc(currentNote)}" placeholder="הערה לפריט זה..." />
   </div>`;
   document.getElementById('adminModalBody').innerHTML = slotsRow + `<div id="admin-names-${id}">${nameRowsHtml}</div>` + noteRow;
   document.getElementById('adminModalOverlay').classList.add('open');
@@ -994,7 +1004,7 @@ window.refreshAdminNameFields = function(id) {
     const val = currentNames[i] || '';
     nameRows += `<div class="admin-name-row">
       <span class="admin-name-label">מתנדב ${i+1}:</span>
-      <input class="admin-name-input" id="admin-name-${id}-${i}" value="${val}" placeholder="ריק – אין מתנדב" />
+      <input class="admin-name-input" id="admin-name-${id}-${i}" value="${esc(val)}" placeholder="ריק – אין מתנדב" />
     </div>`;
   }
   container.innerHTML = nameRows;
@@ -1002,7 +1012,6 @@ window.refreshAdminNameFields = function(id) {
 
 window.saveAdminEdit = async function() {
   if (!adminCurrentId) return;
-  const item = ITEMS.find(i => i.id === adminCurrentId);
   const rawVols2 = state[adminCurrentId] || [];
   const slotsInputSave = document.getElementById('admin-slots-' + adminCurrentId);
   const finalSlots = slotsInputSave ? (parseInt(slotsInputSave.value) || 1) : 1;
@@ -1025,7 +1034,7 @@ window.saveAdminEdit = async function() {
   if (finalSlots && finalSlots > 0) {
     await setDoc(slotsRef, { ...slotsState, [adminCurrentId]: finalSlots });
   }
-  await setDoc(docRef, { ...state, [adminCurrentId]: newVolunteers });
+  await updateDoc(docRef, { [adminCurrentId]: newVolunteers });
   // Save item note
   const noteInput = document.getElementById('admin-note-' + adminCurrentId);
   if (noteInput) {
