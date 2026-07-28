@@ -290,6 +290,10 @@
       <div class="col-toggle-row" id="colToggles"></div>
     </div>
 
+    <div id="hiddenItemsBox" style="display:none;margin-top:0.8rem;padding-top:0.8rem;border-top:2px solid var(--sand)">
+      <div style="font-size:0.82rem;font-weight:700;color:var(--green-deep);margin-bottom:0.4rem">🗑️ פריטים מוסתרים – לחצו כדי להחזיר:</div>
+      <div class="col-toggle-row" id="hiddenItemsList"></div>
+    </div>
   </div>
 
   <div class="free-section">
@@ -410,6 +414,9 @@ const slotsRef = doc(db, EVENT_COLLECTION, 'slots');
 const extraItemsRef = doc(db, EVENT_COLLECTION, 'extraItems');
 const itemNotesRef = doc(db, EVENT_COLLECTION, 'itemNotes');
 let itemNotes = {}; // {itemId: noteText}
+// פריטים קבועים שהמנהל "הסתיר" — לא נמחקים מהקוד, רק לא מוצגים (וניתן להחזיר)
+const hiddenRef = doc(db, EVENT_COLLECTION, 'hiddenItems');
+let hiddenIds = [];
 let slotsState = {};
 let extraItems = []; // [{id,name,cat,slots}]
 let adminCols = JSON.parse(localStorage.getItem('adminCols') || 'null');
@@ -498,6 +505,7 @@ onSnapshot(freeRef, (snap) => { if (snap.exists()) { freeItems = snap.data().ite
 onSnapshot(slotsRef, (snap) => { if (snap.exists()) { slotsState = snap.data(); renderItems(); } });
 onSnapshot(extraItemsRef, (snap) => { if (snap.exists()) { extraItems = snap.data().items || []; renderItems(); } });
 onSnapshot(itemNotesRef, (snap) => { if (snap.exists()) { itemNotes = snap.data(); renderItems(); } });
+onSnapshot(hiddenRef, (snap) => { hiddenIds = snap.exists() ? (snap.data().ids || []) : []; renderItems(); updateAdminPanel(); });
 
 if (currentUser) {
   document.getElementById('activeUserName').textContent = '👋 שלום, ' + currentUser + '!';
@@ -600,7 +608,8 @@ function esc(s) {
 }
 
 function getAllItems() {
-  return [...ITEMS, ...extraItems.map(e => ({ id: e.id, cat: e.cat || '➕ נוסף', name: e.name, slots: e.slots || 1 }))];
+  return [...ITEMS, ...extraItems.map(e => ({ id: e.id, cat: e.cat || '➕ נוסף', name: e.name, slots: e.slots || 1 }))]
+    .filter(i => !hiddenIds.includes(i.id));
 }
 
 function renderItems() {
@@ -642,7 +651,11 @@ function renderItem(item) {
         ? `<button class="signup-btn" onclick="signup('${item.id}')">${currentUser ? '✋ אני מביא' : 'הצטרף'}</button>`
         : `<button class="signup-btn" disabled>מלא ✓</button>`;
   const isExtra = extraItems.some(e => e.id === item.id);
-  const adminBtn = isAdmin ? `<button class="admin-edit-btn" onclick="openAdminEdit('${item.id}')">✏️ עריכה</button>${isExtra ? `<button class="admin-edit-btn" style="color:var(--red-soft);border-color:var(--red-soft)" onclick="deleteExtraItem('${item.id}')">🗑️</button>` : ''}` : '';
+  // 🗑️ לכל פריט: פריט שהמנהל הוסיף נמחק לגמרי, פריט קבוע רק מוסתר (ניתן להחזרה)
+  const adminBtn = isAdmin
+    ? `<button class="admin-edit-btn" onclick="openAdminEdit('${item.id}')">✏️ עריכה</button>` +
+      `<button class="admin-edit-btn" style="color:var(--red-soft);border-color:var(--red-soft)" title="${isExtra ? 'מחיקת הפריט' : 'הסתרת הפריט'}" onclick="${isExtra ? `deleteExtraItem('${item.id}')` : `hideItem('${item.id}')`}">🗑️</button>`
+    : '';
   return `<div class="item-card ${isFull ? 'full' : ''}" id="item-card-${item.id}">
     <div class="item-top">
       <span class="item-name">${esc(item.name)}</span>
@@ -844,8 +857,22 @@ function renderReport() {
 function updateAdminPanel() {
   const panel = document.getElementById('adminPanel');
   if (panel) panel.style.display = currentUser === 'מנהל' ? 'block' : 'none';
-  if (currentUser === 'מנהל') renderColToggles();
+  if (currentUser === 'מנהל') { renderColToggles(); renderHiddenItems(); }
   renderHowto();
+}
+
+// רשימת הפריטים המוסתרים בממשק המנהל, עם החזרה בלחיצה
+function renderHiddenItems() {
+  const box = document.getElementById('hiddenItemsBox');
+  const list = document.getElementById('hiddenItemsList');
+  if (!box || !list) return;
+  if (!hiddenIds.length) { box.style.display = 'none'; return; }
+  const known = [...ITEMS, ...extraItems];
+  box.style.display = 'block';
+  list.innerHTML = hiddenIds.map(id => {
+    const it = known.find(i => i.id === id);
+    return `<button class="admin-tool-btn secondary" onclick="unhideItem('${id}')">↩️ ${esc(it ? it.name : id)}</button>`;
+  }).join('');
 }
 
 // ההסבר הקצר בראש הדף — גרסה למשתמש רגיל וגרסה ל"מנהל"
@@ -858,7 +885,7 @@ function renderHowto() {
     ? `<b>🔧 שלום מנהל!</b> יש לך הרשאות מלאות:
        <ul>
          <li>✏️ <b>עריכה</b> בכל פריט — לשנות שמות, כמויות והערות</li>
-         <li>➕ להוסיף או למחוק פריטים מהרשימה</li>
+         <li>➕ להוסיף פריטים · 🗑️ להסתיר פריטים (ניתן להחזיר)</li>
          <li>📊 דוח סטטוס למטה + ייצוא לאקסל</li>
        </ul>
        <div class="note">⏱️ הגבלת הדקה לא חלה עליך — אתה יכול לשנות הכל, בכל זמן.
@@ -946,6 +973,20 @@ window.saveNewItem = async function() {
   if (noteVal) await setDoc(itemNotesRef, { ...itemNotes, [newItem.id]: noteVal });
   closeAddItemModal();
   showToast('פריט נוסף! ✅');
+};
+
+window.hideItem = async function(id) {
+  const item = getAllItems().find(i => i.id === id);
+  const vols = (state[id] || []).length;
+  const warn = vols > 0 ? `\n\n⚠️ יש כבר ${vols} נרשמים לפריט הזה.` : '';
+  if (!confirm(`להסתיר את "${item ? item.name : id}" מהרשימה?${warn}\n\nאפשר להחזיר אותו בכל רגע מממשק המנהל.`)) return;
+  await setDoc(hiddenRef, { ids: [...hiddenIds, id] });
+  showToast('הפריט הוסתר 🗑️');
+};
+
+window.unhideItem = async function(id) {
+  await setDoc(hiddenRef, { ids: hiddenIds.filter(h => h !== id) });
+  showToast('הפריט הוחזר ↩️');
 };
 
 window.deleteExtraItem = async function(id) {
