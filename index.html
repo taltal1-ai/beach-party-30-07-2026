@@ -1169,23 +1169,44 @@ window.closeModal = function(e) {
   }
 };
 
+// פריט עם המון "מקומות" הוא בפועל קריאה לכולם ולא משבצות אמיתיות,
+// ולכן "צריך עוד 250" נשמע מגוחך. מעל הסף הזה מנוסחים אחרת.
+const OPEN_CALL_MIN = 50;
+const RLM = String.fromCharCode(0x200F);   // מאלץ וואטסאפ ליישר את השורה מימין לשמאל
+
 window.copyToClipboard = function() {
-  const lines = ['☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*', '📍 חוף הצוק\n'];
+  const lines = ['☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*', '📍 חוף הצוק', ''];
+  const missing = [];
   getAllItems().forEach(item => {
     const raw = state[item.id] || [];
     const v = raw.map(e => typeof e === 'object' ? e.name : e);
     const eff = (slotsState && slotsState[item.id] != null) ? slotsState[item.id] : item.slots;
-    lines.push(`• ${item.name} (${v.length}/${eff}): ${v.length > 0 ? v.join(', ') : '—'}`);
+    const need = Math.max(0, eff - v.length);
+    const who = v.length ? ' – ' + v.join(', ') : '';
+    if (eff >= OPEN_CALL_MIN) {
+      lines.push(`• ${item.name}${v.length ? ` (נרשמו ${v.length})${who}` : ''}`);
+    } else if (need === 0) {
+      lines.push(`• ${item.name}: מלא ✅${who}`);
+    } else {
+      lines.push(`• ${item.name}: יש ${v.length}, צריך עוד ${need}${who}`);
+      missing.push(`${item.name} (${need})`);
+    }
   });
+  if (missing.length) {
+    lines.push('', `⚠️ *עדיין חסר:* ${missing.join(' · ')}`);
+  }
   if (freeItems.length > 0) {
-    lines.push('\n✨ *הוספות חופשיות:*');
+    lines.push('', '✨ *הוספות חופשיות:*');
     freeItems.forEach(item => { lines.push(`• ${item.text} – ${item.who}`); });
   }
   if (rides.length > 0) {
-    lines.push('\n🚗 *טרמפים:*');
+    lines.push('', '🚗 *טרמפים:*');
     rides.forEach(r => { lines.push(`• ${r.name} – מ${r.from} ${r.full ? '(מלא)' : `(${r.seats || 1} מקומות)`} – ${prettyPhone(r.phone)}`); });
   }
-  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+  lines.push('', '👉 להירשם: https://taltal1-ai.github.io/beach-party-30-07-2026/');
+  // RLM בראש כל שורה — בלעדיו וואטסאפ מיישר לשמאל, כי השורות מתחילות באמוג'י או ב-• שהם ניטרליים
+  const text = lines.map(l => l ? RLM + l : l).join(String.fromCharCode(10));
+  navigator.clipboard.writeText(text).then(() => {
     showToast('הועתק! 📋 אפשר להדביק בוואטסאפ');
     window.closeModal();
   });
