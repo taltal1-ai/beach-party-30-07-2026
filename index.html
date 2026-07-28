@@ -73,6 +73,20 @@
   .legend-dot.full { background: var(--green-full-border); }
   .legend-dot.missing { background: var(--orange-border); }
 
+  /* הסבר קצר — משתנה בין משתמש רגיל ל"מנהל" */
+  .howto {
+    background: #fff; border-radius: 14px; padding: 0.9rem 1.2rem; margin-bottom: 1.2rem;
+    border: 1.5px solid var(--sand); border-right: 5px solid var(--green-light);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04); font-size: 0.86rem; line-height: 1.65;
+  }
+  .howto.admin { border-right-color: var(--green-deep); background: #fdfbff; }
+  .howto b { color: var(--green-deep); }
+  .howto ol, .howto ul { margin: 0.35rem 0.9rem 0 0; padding-right: 0.4rem; }
+  .howto li { margin-bottom: 0.15rem; }
+  .howto .note {
+    margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--sand);
+    color: var(--brown); font-size: 0.82rem;
+  }
   .name-section { background: #fff; border-radius: 16px; padding: 1.4rem 1.6rem; margin-bottom: 1.5rem; box-shadow: 0 2px 16px rgba(45,90,39,0.1); border: 1.5px solid var(--sand); }
   .name-section label { display: block; font-weight: 700; color: var(--green-deep); margin-bottom: 0.6rem; }
   .name-row { display: flex; gap: 0.7rem; }
@@ -221,7 +235,7 @@
   <div class="event-info">
     <span class="event-badge">📅 חמישי 30.7</span>
     <span class="event-badge">⏰ 18:00</span>
-    <span class="event-badge">📍 חוף הצוק</span>
+    <span class="event-badge">📍 חוף הצוק – מגרש החניה</span>
   </div>
   <div id="countdownLabel" style="color:rgba(255,255,255,0.9);font-size:1.1rem;font-weight:700;font-family:inherit;margin-top:0.8rem">⏳ הספירה לאחור:</div>
   <div id="countdown" class="countdown"></div>
@@ -244,6 +258,8 @@
       <span>כתום – חסרים מתנדבים ⚠️</span>
     </div>
   </div>
+
+  <div class="howto" id="howto"></div>
 
   <div class="name-section">
     <label>🙋 מי אתם?</label>
@@ -503,6 +519,7 @@ window.setName = function() {
   document.getElementById('nameInput').value = '';
   document.getElementById('nameInput').disabled = true;
   document.querySelector('.name-btn').disabled = true;
+  updateAdminPanel();
   renderItems();
   showToast('ברוך הבא ' + currentUser + '! 🎉');
 };
@@ -819,6 +836,32 @@ function updateAdminPanel() {
   const panel = document.getElementById('adminPanel');
   if (panel) panel.style.display = currentUser === 'מנהל' ? 'block' : 'none';
   if (currentUser === 'מנהל') renderColToggles();
+  renderHowto();
+}
+
+// ההסבר הקצר בראש הדף — גרסה למשתמש רגיל וגרסה ל"מנהל"
+function renderHowto() {
+  const el = document.getElementById('howto');
+  if (!el) return;
+  const isAdmin = currentUser === 'מנהל';
+  el.className = 'howto' + (isAdmin ? ' admin' : '');
+  el.innerHTML = isAdmin
+    ? `<b>🔧 שלום מנהל!</b> יש לך הרשאות מלאות:
+       <ul>
+         <li>✏️ <b>עריכה</b> בכל פריט — לשנות שמות, כמויות והערות</li>
+         <li>➕ להוסיף או למחוק פריטים מהרשימה</li>
+         <li>📊 דוח סטטוס למטה + ייצוא לאקסל</li>
+       </ul>
+       <div class="note">⏱️ הגבלת הדקה לא חלה עליך — אתה יכול לשנות הכל, בכל זמן.
+       ההערות שאתה מוסיף גלויות רק לך.</div>`
+    : `<b>👋 איך זה עובד?</b>
+       <ol>
+         <li>רשמו את שמכם בשדה למטה</li>
+         <li>לחצו <b>"אני מביא"</b> ליד כל דבר שאתם מביאים</li>
+         <li>מביאים משהו שלא ברשימה? הוסיפו אותו ב<b>"הוספה חופשית"</b></li>
+       </ol>
+       <div class="note">⏱️ אפשר לבטל או לשנות עד <b>דקה</b> מרגע ההרשמה.
+       אחרי זה — שלחו הודעה למנהל, רק הוא יכול לשנות.</div>`;
 }
 
 
