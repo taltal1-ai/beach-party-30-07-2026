@@ -102,7 +102,6 @@
   .change-name { font-size: 0.78rem; color: var(--brown); cursor: pointer; text-decoration: underline; }
   .contact-row { display: flex; gap: 0.7rem; margin-top: 0.6rem; flex-wrap: wrap; }
   .contact-row .c-phone { flex: 1 1 150px; direction: ltr; text-align: right; }
-  .contact-row .c-insta { flex: 1 1 130px; direction: ltr; text-align: right; }
   .hide-phone { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; font-size: 0.82rem; color: var(--brown); cursor: pointer; }
   .hide-phone input { cursor: pointer; }
   .hide-note { font-size: 0.76rem; color: var(--red-soft); margin-top: 0.3rem; display: none; }
@@ -316,7 +315,6 @@
     </div>
     <div class="contact-row" id="contactRow">
       <input class="name-input c-phone" id="phoneInput" type="tel" inputmode="tel" placeholder="טלפון (חובה) – 050-1234567">
-      <input class="name-input c-insta" id="instaInput" type="text" placeholder="אינסטגרם (לא חובה)">
     </div>
     <label class="hide-phone" id="hidePhoneRow">
       <input type="checkbox" id="hidePhone">
@@ -504,7 +502,7 @@ let rides = [];
 // מחפשי טרמפ: [{id, name, phone, from, ts}]
 const rideReqRef = doc(db, EVENT_COLLECTION, 'rideRequests');
 let rideRequests = [];
-// פרטי קשר לפי שם: { "<שם>": {phone, instagram, hidden} }
+// פרטי קשר לפי שם: { "<שם>": {phone, hidden} }
 const contactsRef = doc(db, EVENT_COLLECTION, 'contacts');
 let contacts = {};
 let slotsState = {};
@@ -665,10 +663,9 @@ window.setName = async function() {
     const phoneRaw = document.getElementById('phoneInput').value.trim();
     const phone = normalizePhone(phoneRaw);
     if (!phone) { showToast('צריך טלפון תקין – למשל 050-1234567 📞'); document.getElementById('phoneInput').focus(); return; }
-    const instaRaw = document.getElementById('instaInput').value.trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '');
     const hidden = document.getElementById('hidePhone').checked;
     // merge:true מעדכן רק את הרשומה שלי ולא דורס אחרים
-    await setDoc(contactsRef, { [val]: { phone, instagram: instaRaw || '', hidden } }, { merge: true });
+    await setDoc(contactsRef, { [val]: { phone, hidden } }, { merge: true });
 
     // הסתרת הטלפון מסירה טרמפים/בקשות קיימים — אחרת המספר היה ממשיך להופיע שם
     if (hidden) {
@@ -703,7 +700,6 @@ window.logout = function() {
   localStorage.removeItem('beachPartyUser');
   document.getElementById('nameInput').value = '';
   document.getElementById('phoneInput').value = '';
-  document.getElementById('instaInput').value = '';
   document.getElementById('hidePhone').checked = false;
   syncNameSection();
   updateAdminPanel();
@@ -716,7 +712,6 @@ window.changeName = function() {
   const c = myContact();
   if (c) {
     document.getElementById('phoneInput').value = c.phone ? prettyPhone(c.phone) : '';
-    document.getElementById('instaInput').value = c.instagram || '';
     document.getElementById('hidePhone').checked = !!c.hidden;
     document.getElementById('hideNote').classList.toggle('show', !!c.hidden);
   }
@@ -814,13 +809,10 @@ function contactLinks(name) {
   const c = contacts[name];
   if (!c || !c.phone) return '';
   const isAdmin = currentUser === 'מנהל';
-  const insta = c.instagram
-    ? `<a href="https://instagram.com/${encodeURIComponent(c.instagram)}" target="_blank" rel="noopener" title="אינסטגרם @${esc(c.instagram)}">📷</a>`
-    : '';
-  if (c.hidden && !isAdmin) return `<span class="tag-locked" title="הטלפון מוסתר לפי בקשת המשתמש">🔒</span>${insta}`;
+  if (c.hidden && !isAdmin) return `<span class="tag-locked" title="הטלפון מוסתר לפי בקשת המשתמש">🔒</span>`;
   const msg = encodeURIComponent('היי! לגבי מסיבת חוף הצוק –');
   const lock = c.hidden ? '<span class="tag-locked" title="מוסתר משאר המשתמשים">🔒</span>' : '';
-  return `${lock}<a href="https://wa.me/${c.phone}?text=${msg}" target="_blank" rel="noopener" title="וואטסאפ ${prettyPhone(c.phone)}">💬</a>${insta}`;
+  return `${lock}<a href="https://wa.me/${c.phone}?text=${msg}" target="_blank" rel="noopener" title="וואטסאפ ${prettyPhone(c.phone)}">💬</a>`;
 }
 
 function prettyPhone(intl) {
