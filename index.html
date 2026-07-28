@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מסיבת חוף הצוק ☮️ 30.7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Varela+Round&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ☮️ Woodstock / 60s beach — שקיעה, חול, טאי-דאי */
+    --green-deep: #6b2d8c;   /* סגול פסיכדלי — כותרות ומסגרות */
+    --green-mid: #d94f1e;    /* כתום שקיעה — כפתורים ראשיים */
+    --green-light: #f2b705;  /* חרדל/שמש */
+    --cream: #fdf1dc;        /* חול */
+    --sand: #e8c99b;         /* גבולות */
+    --brown: #8b4a14;
+    --accent: #f2b705;
+    --red-soft: #c4362b;
+    --text: #3d2412;
+    --orange: #d94f1e;
+    --orange-light: #fff4e0;
+    --orange-border: #f2b705;
+    --green-full: #e9f7e4;   /* "מלא" — ירוק אבוקדו רך */
+    --green-full-border: #6b9e3f;
+    --teal: #1f8a8a;         /* ים */
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Varela Round', Arial, sans-serif; background: var(--cream); color: var(--text); min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 8% 12%, rgba(242,183,5,0.22) 0%, transparent 45%),
+      radial-gradient(ellipse at 92% 22%, rgba(107,45,140,0.16) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 95%, rgba(31,138,138,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 88% 72%, rgba(217,79,30,0.14) 0%, transparent 50%);
+  }
+  header {
+    background:
+      radial-gradient(circle at 50% 118%, #f2b705 0%, #f2b705 18%, #d94f1e 18%, #d94f1e 34%, #c4362b 34%, #c4362b 50%, #6b2d8c 50%, #6b2d8c 68%, #3b1d5e 68%);
+    padding: 2.5rem 1.5rem 2.4rem; text-align: center; position: relative; overflow: hidden;
+  }
+  /* קרני שמש מסתובבות ברקע — וודסטוק */
+  header .rays {
+    position: absolute; top: 50%; left: 50%; width: 900px; height: 900px; margin: -450px 0 0 -450px;
+    background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.10) 0deg 9deg, transparent 9deg 18deg);
+    animation: spin 60s linear infinite; pointer-events: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { header .rays { animation: none; } }
+  header::before { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 40px; background: var(--cream); clip-path: ellipse(55% 100% at 50% 100%); z-index: 2; }
+  header::after { content: '☮️🌻🌊🎸🌈🎶🌞🐚☮️'; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); font-size: 1rem; opacity: 0.75; white-space: nowrap; letter-spacing: 4px; z-index: 2; }
+  header > *:not(.rays) { position: relative; z-index: 2; }
+  .header-title { font-family: 'Suez One', Arial, sans-serif; font-size: 2.4rem; color: #fff; margin-top: 1.2rem; text-shadow: 0 2px 12px rgba(0,0,0,0.35), 0 0 26px rgba(242,183,5,0.5); letter-spacing: 1px; }
+  .header-sub { color: rgba(255,255,255,0.85); font-size: 1rem; margin-top: 0.4rem; font-weight: 300; }
+  .event-info { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+  .event-badge { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 2rem; padding: 0.35rem 1rem; font-size: 0.88rem; color: #fff; font-weight: 500; }
+  .main { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  .status-bar { background: #fff; border-radius: 12px; padding: 0.7rem 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; border: 1.5px solid var(--sand); box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
+  .status-dot.connected { background: #4caf50; animation: pulse 2s infinite; }
+  .status-dot.error { background: #f44336; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  /* Legend */
+  .legend {
+    display: flex; gap: 1rem; background: #fff; border-radius: 12px;
+    padding: 0.8rem 1.2rem; margin-bottom: 1.2rem;
+    border: 1.5px solid var(--sand); box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; font-weight: 600; }
+  .legend-dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+  .legend-dot.full { background: var(--green-full-border); }
+  .legend-dot.missing { background: var(--orange-border); }
+
+  .name-section { background: #fff; border-radius: 16px; padding: 1.4rem 1.6rem; margin-bottom: 1.5rem; box-shadow: 0 2px 16px rgba(45,90,39,0.1); border: 1.5px solid var(--sand); }
+  .name-section label { display: block; font-weight: 700; color: var(--green-deep); margin-bottom: 0.6rem; }
+  .name-row { display: flex; gap: 0.7rem; }
+  .name-input { flex: 1; border: 2px solid var(--sand); border-radius: 10px; padding: 0.65rem 1rem; font-family: inherit; font-size: 1rem; color: var(--text); background: var(--cream); transition: border-color 0.2s; direction: rtl; }
+  .name-input:focus { outline: none; border-color: var(--green-mid); background: #fff; }
+  .name-btn { background: var(--green-mid); color: #fff; border: none; border-radius: 10px; padding: 0 1.2rem; font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+  .name-btn:hover { background: var(--green-deep); }
+  .active-user { display: none; align-items: center; gap: 0.6rem; margin-top: 0.7rem; }
+  .active-user.show { display: flex; }
+  .active-user span { font-size: 0.9rem; color: var(--green-deep); font-weight: 500; }
+  .change-name { font-size: 0.78rem; color: var(--brown); cursor: pointer; text-decoration: underline; }
+  .category { margin-bottom: 1.2rem; }
+  .category-title { font-family: inherit; font-size: 1rem; color: var(--green-deep); padding: 0.5rem 0 0.4rem; border-bottom: 2px solid var(--green-light); margin-bottom: 0.7rem; display: flex; align-items: center; gap: 0.4rem; }
+
+  .item-card { border-radius: 13px; padding: 0.85rem 1.1rem; margin-bottom: 0.55rem; transition: border-color 0.2s, background 0.3s; box-shadow: 0 1px 6px rgba(0,0,0,0.04); border: 2px solid var(--orange-border); background: var(--orange-light); }
+  .item-card.full { border-color: var(--green-full-border); background: var(--green-full); }
+
+  .item-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .item-name { font-weight: 600; font-size: 0.97rem; flex: 1; }
+  .slots-badge { font-size: 0.78rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 2rem; background: rgba(232,120,10,0.15); color: var(--orange); white-space: nowrap; }
+  .item-card.full .slots-badge { background: rgba(74,140,63,0.15); color: var(--green-deep); }
+  .signup-btn { background: var(--green-mid); color: #fff; border: none; border-radius: 8px; padding: 0.38rem 0.9rem; font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+  .signup-btn:hover { background: var(--green-deep); }
+  .signup-btn:disabled { background: #aaa; cursor: not-allowed; color: #fff; }
+  .cancel-btn { background: transparent; color: var(--red-soft); border: 1.5px solid var(--red-soft); border-radius: 8px; padding: 0.33rem 0.75rem; font-family: inherit; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .cancel-btn:hover { background: var(--red-soft); color: #fff; }
+  .volunteers { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.55rem; }
+  .volunteer-tag { background: rgba(74,140,63,0.12); color: var(--green-deep); border-radius: 2rem; padding: 0.18rem 0.65rem; font-size: 0.8rem; font-weight: 500; }
+  .volunteer-tag.is-me { background: rgba(232,160,32,0.25); color: var(--brown); font-weight: 700; }
+  .progress-bar { height: 5px; background: rgba(0,0,0,0.08); border-radius: 3px; margin-top: 0.6rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange-border), var(--orange)); border-radius: 3px; transition: width 0.4s ease; }
+  .item-card.full .progress-fill { background: linear-gradient(90deg, var(--green-light), var(--green-mid)); }
+
+  .free-section { background: #fff; border: 2px dashed var(--green-light); border-radius: 16px; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+  .free-section .category-title { border-bottom-color: var(--accent); color: var(--brown); }
+  .free-add-row { display: flex; gap: 0.7rem; margin-bottom: 1rem; }
+  .free-input { flex: 1; border: 2px solid var(--sand); border-radius: 10px; padding: 0.6rem 1rem; font-family: inherit; font-size: 0.95rem; color: var(--text); background: var(--cream); direction: rtl; }
+  .free-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+  .free-add-btn { background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 0 1.1rem; font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .free-add-btn:hover { background: var(--brown); }
+  .free-item { display: flex; align-items: center; justify-content: space-between; background: rgba(232,160,32,0.08); border: 1px solid rgba(232,160,32,0.25); border-radius: 10px; padding: 0.6rem 1rem; margin-bottom: 0.5rem; }
+  .free-item-text { font-size: 0.92rem; font-weight: 500; flex: 1; }
+  .free-item-who { font-size: 0.8rem; color: var(--brown); font-weight: 600; margin: 0 0.5rem; }
+  .free-delete-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1rem; }
+  .free-delete-btn:hover { color: var(--red-soft); }
+  .free-edit-btn { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0 0.2rem; }
+  .free-edit-btn:hover { opacity: 0.7; }
+
+
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--green-deep); color: #fff; padding: 0.7rem 1.5rem; border-radius: 2rem; font-size: 0.9rem; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index: 999; white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(253,246,227,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; gap: 1rem; }
+  .spinner { width: 40px; height: 40px; border: 4px solid var(--sand); border-top-color: var(--green-mid); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay p { font-family: inherit; color: var(--green-deep); font-size: 1.1rem; }
+  .summary-btn { display: block; width: 100%; background: linear-gradient(135deg, var(--green-deep), var(--green-mid)); color: #fff; border: none; border-radius: 14px; padding: 1rem; font-family: inherit; font-size: 1.1rem; cursor: pointer; margin-top: 1.5rem; box-shadow: 0 4px 16px rgba(45,90,39,0.25); transition: transform 0.2s; }
+  .summary-btn:hover { transform: translateY(-2px); }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: flex-end; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--cream); border-radius: 20px 20px 0 0; padding: 1.5rem 1.5rem 2.5rem; width: 100%; max-width: 680px; max-height: 80vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from{transform:translateY(60px);opacity:0} to{transform:translateY(0);opacity:1} }
+  .modal h2 { font-family: inherit; color: var(--green-deep); margin-bottom: 1rem; font-size: 1.3rem; }
+  .modal-close { float: left; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #999; }
+  .summary-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 0.6rem 0; border-bottom: 1px solid var(--sand); gap: 1rem; font-size: 0.92rem; }
+  .summary-item-name { font-weight: 600; }
+  .summary-names { color: var(--green-deep); font-size: 0.85rem; }
+  .summary-empty { color: #bbb; font-size: 0.85rem; font-style: italic; }
+  .copy-btn { display: block; width: 100%; margin-top: 1.2rem; background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 0.8rem; font-family: inherit; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
+
+  .admin-edit-btn { background: transparent; color: var(--green-deep); border: 1.5px solid var(--green-mid); border-radius: 8px; padding: 0.33rem 0.75rem; font-family: inherit; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .admin-edit-btn:hover { background: var(--green-mid); color: #fff; }
+  .admin-name-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .admin-name-input { flex: 1; border: 2px solid var(--sand); border-radius: 8px; padding: 0.5rem 0.8rem; font-family: inherit; font-size: 0.95rem; direction: rtl; }
+  .admin-name-input:focus { outline: none; border-color: var(--green-mid); }
+  .admin-name-label { font-size: 0.78rem; color: #999; white-space: nowrap; }
+
+  /* Admin panel */
+  .admin-panel { background: #fff; border: 2px solid var(--green-mid); border-radius: 16px; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+  .admin-panel .category-title { color: var(--green-deep); border-bottom-color: var(--green-mid); }
+  .admin-toolbar { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .admin-tool-btn { background: var(--green-mid); color: #fff; border: none; border-radius: 8px; padding: 0.45rem 0.9rem; font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+  .admin-tool-btn:hover { background: var(--green-deep); }
+  .admin-tool-btn.secondary { background: transparent; color: var(--green-deep); border: 1.5px solid var(--green-mid); }
+  .admin-tool-btn.secondary:hover { background: var(--green-mid); color: #fff; }
+
+  .col-toggle-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .col-toggle { display: flex; align-items: center; gap: 0.3rem; font-size: 0.82rem; cursor: pointer; background: rgba(74,140,63,0.08); border: 1px solid var(--green-light); border-radius: 2rem; padding: 0.25rem 0.7rem; user-select: none; }
+  .col-toggle input { cursor: pointer; }
+  .col-toggle.active { background: rgba(74,140,63,0.2); font-weight: 700; }
+  .summary-divider { font-family: inherit; color: var(--brown); margin: 1rem 0 0.5rem; font-size: 0.95rem; }
+
+  .report-section { background: #fff; border-radius: 16px; padding: 1.2rem 0.6rem; margin-top: 1.5rem; border: 1.5px solid var(--sand); box-shadow: 0 1px 6px rgba(0,0,0,0.04); overflow: hidden; }
+  .report-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  @media (max-width: 480px) { .report-table { font-size: 0.62rem; } .report-table th, .report-table td { padding: 0.35rem 0.3rem; } .report-table .col-registered { display: none; } }
+  .report-table th { background: var(--green-deep); color: #fff; padding: 0.5rem 0.7rem; text-align: right; font-family: "Secular One", sans-serif; font-weight: 400; }
+  .report-table td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--sand); vertical-align: middle; }
+  .report-table tr:last-child td { border-bottom: none; }
+  .report-table tr.row-full td { background: #fff; }
+  .report-table tr.row-missing td { background: #fff; }
+  .report-table .badge-full { color: #2d7a27; font-size: 0.9rem; font-weight: 700; }
+  .report-table .badge-missing { color: #e8780a; font-size: 0.9rem; font-weight: 700; }
+
+  .countdown {
+    display: flex; justify-content: center; gap: 1rem;
+    margin-top: 1rem; flex-wrap: wrap;
+  }
+  .countdown-item {
+    background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 12px; padding: 0.5rem 1rem; text-align: center; min-width: 70px;
+  }
+  .countdown-num {
+    font-family: inherit; font-size: 2rem; font-weight: 700;
+    color: #fff; line-height: 1;
+  }
+  .countdown-label {
+    font-size: 0.72rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem;
+  }
+  .countdown-done {
+    font-family: inherit; font-size: 1.2rem; color: #fff;
+    font-weight: 700; margin-top: 1rem;
+  }
+  /* אחרי 18:00 — השעון סופר קדימה, בזהב חוגג */
+  .countdown.counting-up .countdown-item {
+    background: rgba(242,183,5,0.32); border-color: rgba(255,255,255,0.6);
+    box-shadow: 0 0 18px rgba(242,183,5,0.45);
+    animation: glow 2.6s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%,100% { box-shadow: 0 0 14px rgba(242,183,5,0.35); }
+    50%     { box-shadow: 0 0 26px rgba(242,183,5,0.65); }
+  }
+  @media (prefers-reduced-motion: reduce) { .countdown.counting-up .countdown-item { animation: none; } }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+  <div class="spinner"></div>
+  <p>מתחבר...</p>
+</div>
+
+<header>
+  <div class="rays"></div>
+  <div class="header-title">☮️ מסיבת חוף הצוק</div>
+  <div class="header-sub">פיס, אהבה ומוזיקה על החול 🌻 מי מביא מה?</div>
+  <div class="event-info">
+    <span class="event-badge">📅 חמישי 30.7</span>
+    <span class="event-badge">⏰ 18:00</span>
+    <span class="event-badge">📍 חוף הצוק</span>
+  </div>
+  <div id="countdownLabel" style="color:rgba(255,255,255,0.9);font-size:1.1rem;font-weight:700;font-family:inherit;margin-top:0.8rem">⏳ הספירה לאחור:</div>
+  <div id="countdown" class="countdown"></div>
+</header>
+
+<div class="main">
+  <div class="status-bar">
+    <div class="status-dot connected" id="statusDot"></div>
+    <span id="statusText">מחובר – מתעדכן בזמן אמת 🟢</span>
+  </div>
+
+  <!-- מקרא -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot full"></div>
+      <span>מלא – סגור ✅</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot missing"></div>
+      <span>כתום – חסרים מתנדבים ⚠️</span>
+    </div>
+  </div>
+
+  <div class="name-section">
+    <label>🙋 מי אתם?</label>
+    <div class="name-row">
+      <input class="name-input" id="nameInput" type="text" placeholder="הכניסו את שמכם...">
+      <button class="name-btn" onclick="setName()">אישור</button>
+    </div>
+    <div class="active-user" id="activeUser">
+      <span id="activeUserName"></span>
+      <span class="change-name" onclick="changeName()">שינוי שם</span>
+      <span class="change-name" onclick="logout()" style="color:var(--red-soft)">התנתקות</span>
+    </div>
+  </div>
+
+  <div id="itemsContainer"></div>
+
+
+  <!-- Admin panel - visible only to מנהל -->
+  <div class="admin-panel" id="adminPanel" style="display:none">
+    <div class="category-title">🔧 ממשק מנהל</div>
+    <div class="admin-toolbar">
+      <button class="admin-tool-btn" onclick="openAddItemModal()">➕ הוסף פריט</button>
+      <button class="admin-tool-btn secondary" onclick="toggleColSettings()">📊 עמודות דוח</button>
+      <button class="admin-tool-btn secondary" onclick="exportToExcel()">⬇️ ייצוא לאקסל</button>
+    </div>
+    <div id="colSettings" style="display:none;margin-bottom:0.8rem">
+      <div style="font-size:0.82rem;font-weight:700;color:var(--green-deep);margin-bottom:0.4rem">בחר עמודות להצגה בדוח:</div>
+      <div class="col-toggle-row" id="colToggles"></div>
+    </div>
+
+  </div>
+
+  <div class="free-section">
+    <div class="category-title">✨ הוספה חופשית – מה שרוצים להביא</div>
+    <div class="free-add-row">
+      <input class="free-input" id="freeInput" type="text" placeholder="מה אתם מביאים? (למשל: עוגת שוקולד)">
+      <button class="free-add-btn" onclick="addFreeItem()">+ הוסף</button>
+    </div>
+    <div id="freeItemsList"></div>
+  </div>
+
+  <div class="report-section">
+    <div class="category-title">📊 דוח סטטוס</div>
+    <div style="overflow-x:auto">
+      <table class="report-table">
+        <thead><tr><th>פריט</th><th>מתנדבים</th><th class="col-registered">נרשמו</th><th>צריך</th><th>מצב</th></tr></thead>
+        <tbody id="reportBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2>📋 סיכום מתנדבים</h2>
+    <div id="summaryContent"></div>
+    <button class="copy-btn" onclick="copyToClipboard()">📋 העתק לוואטסאפ</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="adminModalOverlay" onclick="closeAdminModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAdminModal()">✕</button>
+    <h2 id="adminModalTitle">✏️ עריכת שמות</h2>
+    <div id="adminModalBody"></div>
+    <button class="copy-btn" style="background:var(--green-mid);margin-top:1rem" onclick="saveAdminEdit()">💾 שמור שינויים</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addItemModalOverlay" onclick="closeAddItemModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAddItemModal()">✕</button>
+    <h2>➕ הוסף פריט חדש</h2>
+    <div class="admin-name-row" style="margin-bottom:0.8rem">
+      <span class="admin-name-label">שם הפריט:</span>
+      <input class="admin-name-input" id="newItemName" placeholder="למשל: שקיות קרח">
+    </div>
+    <div class="admin-name-row" style="margin-bottom:0.5rem">
+      <span class="admin-name-label">קטגוריה:</span>
+      <select class="admin-name-input" id="newItemCatSelect" onchange="toggleNewCat(this.value)" style="flex:1"></select>
+    </div>
+    <div class="admin-name-row" style="margin-bottom:0.8rem" id="newCatRow">
+      <span class="admin-name-label">שם חדש:</span>
+      <input class="admin-name-input" id="newItemCat" placeholder="למשל: 🧊 קרח">
+    </div>
+    <div class="admin-name-row" style="margin-bottom:1rem">
+      <span class="admin-name-label">כמות נדרשת:</span>
+      <input class="admin-name-input" type="number" min="1" max="20" id="newItemSlots" value="1" style="width:80px;flex:none;text-align:center">
+    </div>
+    <div class="admin-name-row" style="margin-bottom:1rem">
+      <span class="admin-name-label">📝 הערה:</span>
+      <input class="admin-name-input" id="newItemNote" placeholder="הערה לפריט (אופציונלי)...">
+    </div>
+    <button class="copy-btn" style="background:var(--green-mid)" onclick="saveNewItem()">✅ הוסף לרשימה</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYSvYFTkCMLYFhaRPz3LQyzH2f2lukLbw",
+  authDomain: "picnic-wolfson.firebaseapp.com",
+  projectId: "picnic-wolfson",
+  storageBucket: "picnic-wolfson.firebasestorage.app",
+  messagingSenderId: "1069533809072",
+  appId: "1:1069533809072:web:5400d805f859ba7c646e75"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ITEMS = [
+  { id: 'tables',      cat: '🪑 ציוד',     name: 'שולחנות',                  slots: 3 },
+  { id: 'water',       cat: '💧 שתייה',     name: 'שישיות מים מינרליים',      slots: 3 },
+  { id: 'cups',        cat: '🍽️ חד פעמי',  name: 'כוסות (3 שרוולים כל אחד)', slots: 3 },
+  { id: 'plates',      cat: '🍽️ חד פעמי',  name: 'צלחות גדולות (חבילה)',     slots: 3 },
+  { id: 'forks',       cat: '🍽️ חד פעמי',  name: 'מזלגות (שקית)',            slots: 3 },
+  { id: 'blankets',    cat: '🌿 נוחות',     name: 'מפות',                     slots: 3 },
+  { id: 'papertowels', cat: '🌿 נוחות',     name: 'מגבות נייר (2 בודדות)',    slots: 2 },
+  { id: 'wipes',       cat: '🌿 נוחות',     name: 'מגבונים לחים (2 חבילות)', slots: 2 },
+  { id: 'opener',      cat: '🍾 שתייה',     name: 'פותחן בקבוקים',            slots: 3 },
+  { id: 'trash',       cat: '♻️ סביבה',     name: 'שקיות אשפה גדולות',        slots: 5 },
+  { id: 'music',       cat: '🎵 בידור',     name: 'רמקול / בידורית',          slots: 1 },
+];
+
+// מתחילים נקי — אף אחד לא רשום מראש
+const INITIAL = {
+  tables: [], water: [], cups: [],
+  plates: [], forks: [], blankets: [],
+  papertowels: [], wipes: [], opener: [], trash: [], music: [],
+};
+
+// 🏖️ collection נפרד לאירוע הזה — לא נוגע בנתוני הפיקניק (collection 'picnic')
+const EVENT_COLLECTION = 'beach-party-2026-07-30';
+
+let state = {};
+let freeItems = [];
+let currentUser = localStorage.getItem('beachPartyUser') || '';
+let changingName = false;
+const docRef = doc(db, EVENT_COLLECTION, 'main');
+const freeRef = doc(db, EVENT_COLLECTION, 'freeItems');
+const slotsRef = doc(db, EVENT_COLLECTION, 'slots');
+const extraItemsRef = doc(db, EVENT_COLLECTION, 'extraItems');
+const itemNotesRef = doc(db, EVENT_COLLECTION, 'itemNotes');
+let itemNotes = {}; // {itemId: noteText}
+let slotsState = {};
+let extraItems = []; // [{id,name,cat,slots}]
+let adminCols = JSON.parse(localStorage.getItem('adminCols') || 'null');
+const ALL_COLS = [
+  { key: 'name', label: 'פריט', always: true },
+  { key: 'volunteers', label: 'מתנדבים' },
+  { key: 'registered', label: 'נרשמו' },
+  { key: 'needed', label: 'צריך' },
+  { key: 'status', label: 'מצב' },
+  { key: 'notes', label: 'הערות' },
+];
+if (!adminCols) adminCols = ALL_COLS.filter(c => c.key !== 'notes').map(c => c.key);
+
+ITEMS.forEach(item => { state[item.id] = []; });
+
+
+// שעון האירוע — Thursday 30.7.2026 18:00
+// לפני השעה: ספירה לאחור. אחריה: השעון מתהפך וסופר קדימה כמה זמן המסיבה נמשכת.
+const PARTY_START = new Date('2026-07-30T18:00:00');
+
+function clockCells(ms) {
+  const days    = Math.floor(ms / (1000 * 60 * 60 * 24));
+  const hours   = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+  const cell = (num, label) =>
+    `<div class="countdown-item"><div class="countdown-num">${num}</div><div class="countdown-label">${label}</div></div>`;
+  // "ימים" מוצג רק אם יש מה להציג — במהלך המסיבה עצמה הוא מיותר
+  return (days > 0 ? cell(days, 'ימים') : '')
+    + cell(String(hours).padStart(2,'0'), 'שעות')
+    + cell(String(minutes).padStart(2,'0'), 'דקות')
+    + cell(String(seconds).padStart(2,'0'), 'שניות');
+}
+
+function updateCountdown() {
+  const el = document.getElementById('countdown');
+  const label = document.getElementById('countdownLabel');
+  if (!el) return;
+  const diff = PARTY_START - new Date();
+
+  if (diff > 0) {
+    if (label) label.textContent = '⏳ הספירה לאחור:';
+    el.classList.remove('counting-up');
+    el.innerHTML = clockCells(diff);
+    return;
+  }
+
+  // המסיבה התחילה — סופרים קדימה
+  if (label) label.innerHTML = '🎉 המסיבה התחילה! רוקדים כבר:';
+  el.classList.add('counting-up');
+  el.innerHTML = clockCells(-diff);
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+async function initDB() {
+  try {
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) await setDoc(docRef, INITIAL);
+    const freeSnap = await getDoc(freeRef);
+    if (!freeSnap.exists()) await setDoc(freeRef, { items: [] });
+    const slotsSnap = await getDoc(slotsRef);
+    if (!slotsSnap.exists()) {
+      const defaultSlots = {};
+      ITEMS.forEach(item => { defaultSlots[item.id] = item.slots; });
+      await setDoc(slotsRef, defaultSlots);
+    }
+
+    const extraSnap = await getDoc(extraItemsRef);
+    if (!extraSnap.exists()) await setDoc(extraItemsRef, { items: [] });
+    const itemNotesSnap = await getDoc(itemNotesRef);
+    if (!itemNotesSnap.exists()) await setDoc(itemNotesRef, {});
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('statusDot').className = 'status-dot connected';
+    document.getElementById('statusText').textContent = 'מחובר – מתעדכן בזמן אמת 🟢';
+    updateAdminPanel();
+  } catch(e) {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('statusDot').className = 'status-dot error';
+    document.getElementById('statusText').textContent = 'שגיאת חיבור – נסו לרענן';
+  }
+}
+
+onSnapshot(docRef, (snap) => { if (snap.exists()) { state = snap.data(); renderItems(); } });
+onSnapshot(freeRef, (snap) => { if (snap.exists()) { freeItems = snap.data().items || []; renderFreeItems(); } });
+onSnapshot(slotsRef, (snap) => { if (snap.exists()) { slotsState = snap.data(); renderItems(); } });
+onSnapshot(extraItemsRef, (snap) => { if (snap.exists()) { extraItems = snap.data().items || []; renderItems(); } });
+onSnapshot(itemNotesRef, (snap) => { if (snap.exists()) { itemNotes = snap.data(); renderItems(); } });
+
+if (currentUser) {
+  document.getElementById('activeUserName').textContent = '👋 שלום, ' + currentUser + '!';
+  document.getElementById('activeUser').classList.add('show');
+  document.getElementById('nameInput').disabled = true;
+  document.querySelector('.name-btn').disabled = true;
+  updateAdminPanel();
+}
+
+window.setName = function() {
+  const val = document.getElementById('nameInput').value.trim();
+  if (!val) { showToast('אנא הכניסו שם 😊'); return; }
+  if (currentUser && !changingName) { showToast('לחצו על "שינוי שם" כדי לשנות'); return; }
+  currentUser = val;
+  changingName = false;
+  localStorage.setItem('beachPartyUser', currentUser);
+  document.getElementById('activeUserName').textContent = '👋 שלום, ' + currentUser + '!';
+  document.getElementById('activeUser').classList.add('show');
+  document.getElementById('nameInput').value = '';
+  document.getElementById('nameInput').disabled = true;
+  document.querySelector('.name-btn').disabled = true;
+  renderItems();
+  showToast('ברוך הבא ' + currentUser + '! 🎉');
+};
+
+window.logout = function() {
+  currentUser = '';
+  changingName = false;
+  localStorage.removeItem('beachPartyUser');
+  document.getElementById('activeUser').classList.remove('show');
+  document.getElementById('nameInput').disabled = false;
+  document.getElementById('nameInput').value = '';
+  document.querySelector('.name-btn').disabled = false;
+  updateAdminPanel();
+  renderItems();
+  showToast('התנתקת בהצלחה 👋');
+};
+
+window.changeName = function() {
+  changingName = true;
+  document.getElementById('nameInput').disabled = false;
+  document.querySelector('.name-btn').disabled = false;
+  document.getElementById('nameInput').value = currentUser;
+  document.getElementById('nameInput').focus();
+  document.getElementById('nameInput').select();
+};
+
+document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.setName(); });
+document.getElementById('freeInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.addFreeItem(); });
+
+window.signup = async function(id) {
+  if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return; }
+  const item = ITEMS.find(i => i.id === id);
+  const current = state[id] || [];
+  const currentNames = current.map(e => typeof e === 'object' ? e.name : e);
+  if (currentNames.includes(currentUser)) { showToast('כבר נרשמת לפריט הזה!'); return; }
+  const effS = (slotsState && slotsState[id] != null) ? slotsState[id] : item.slots;
+  if (current.length >= effS) { showToast('אין יותר מקומות פנויים 😔'); return; }
+  const entry = { name: currentUser, ts: Date.now() };
+  await setDoc(docRef, { ...state, [id]: [...current, entry] });
+  showToast('נרשמת! תודה ' + currentUser + ' 💚');
+};
+
+window.cancel = async function(id) {
+  if (!currentUser) return;
+  const updated = (state[id] || []).filter(e => {
+    const name = typeof e === 'object' ? e.name : e;
+    return name !== currentUser;
+  });
+  await setDoc(docRef, { ...state, [id]: updated });
+  showToast('ביטול הרשמה');
+};
+
+window.addFreeItem = async function() {
+  if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return; }
+  if (currentUser === 'מנהל') { showToast('מנהל לא יכול להוסיף פריטים'); return; }
+  const val = document.getElementById('freeInput').value.trim();
+  if (!val) { showToast('כתבו מה אתם רוצים להביא'); return; }
+  const newItem = { id: Date.now().toString(), text: val, who: currentUser, ts: Date.now(), note: '' };
+  await setDoc(freeRef, { items: [...freeItems, newItem] });
+  document.getElementById('freeInput').value = '';
+  showToast('נוסף! 🎉');
+};
+
+window.deleteFreeItem = async function(id) {
+  const item = freeItems.find(i => i.id === id);
+  if (!item) return;
+  const withinMin = item.ts && item.ts > 0 && (Date.now() - item.ts) < 60000;
+  const canDel = (item.who === currentUser && withinMin) || currentUser === 'מנהל';
+  if (!canDel) { showToast('לא ניתן למחוק לאחר דקה מההוספה'); return; }
+  await setDoc(freeRef, { items: freeItems.filter(i => i.id !== id) });
+};
+
+function getAllItems() {
+  return [...ITEMS, ...extraItems.map(e => ({ id: e.id, cat: e.cat || '➕ נוסף', name: e.name, slots: e.slots || 1 }))];
+}
+
+function renderItems() {
+  const allItems = getAllItems();
+  const cats = [...new Set(allItems.map(i => i.cat))];
+  document.getElementById('itemsContainer').innerHTML = cats.map(cat => {
+    const catItems = allItems.filter(i => i.cat === cat);
+    return `<div class="category">
+      <div class="category-title">${cat}</div>
+      ${catItems.map(item => renderItem(item)).join('')}
+    </div>`;
+  }).join('');
+  renderReport();
+}
+
+function renderItem(item) {
+  const rawVolunteers = state[item.id] || [];
+  const volunteers = rawVolunteers.map(e => typeof e === 'object' ? e.name : e);
+  const volunteerEntries = rawVolunteers.map(e => typeof e === 'object' ? e : { name: e, ts: 0 });
+  const filled = volunteers.length;
+  const effectiveSlots = (slotsState && slotsState[item.id] != null) ? slotsState[item.id] : item.slots;
+  const isFull = filled >= effectiveSlots;
+  const myEntry = volunteerEntries.find(e => e.name === currentUser);
+  const isMeIn = !!myEntry;
+  const canCancel = isMeIn && myEntry && myEntry.ts && myEntry.ts > 0 && (Date.now() - myEntry.ts) < 60000;
+  const pct = Math.round((filled / effectiveSlots) * 100);
+  const tagsHtml = volunteers.length > 0
+    ? `<div class="volunteers">${volunteers.map(n => `<span class="volunteer-tag ${n === currentUser ? 'is-me' : ''}">${n}</span>`).join('')}</div>` : '';
+  const noteText = itemNotes[item.id] || '';
+  const noteHtml = (noteText && currentUser === 'מנהל') ? `<div style="font-size:0.78rem;color:var(--brown);margin-top:0.4rem">📝 ${noteText}</div>` : '';
+  const isAdmin = currentUser === 'מנהל';
+  let btnHtml = isAdmin
+    ? ''
+    : isMeIn
+      ? (canCancel
+          ? `<button class="cancel-btn" onclick="cancel('${item.id}')">❌ ביטול</button>`
+          : `<button class="signup-btn" disabled style="background:#aaa;font-size:0.78rem">נרשמת ✓</button>`)
+      : !isFull
+        ? `<button class="signup-btn" onclick="signup('${item.id}')">${currentUser ? '✋ אני מביא' : 'הצטרף'}</button>`
+        : `<button class="signup-btn" disabled>מלא ✓</button>`;
+  const isExtra = extraItems.some(e => e.id === item.id);
+  const adminBtn = isAdmin ? `<button class="admin-edit-btn" onclick="openAdminEdit('${item.id}')">✏️ עריכה</button>${isExtra ? `<button class="admin-edit-btn" style="color:var(--red-soft);border-color:var(--red-soft)" onclick="deleteExtraItem('${item.id}')">🗑️</button>` : ''}` : '';
+  return `<div class="item-card ${isFull ? 'full' : ''}" id="item-card-${item.id}">
+    <div class="item-top">
+      <span class="item-name">${item.name}</span>
+      <span class="slots-badge">${filled}/${effectiveSlots}</span>
+      <span style="display:flex;gap:0.4rem">${btnHtml}${adminBtn}</span>
+    </div>
+    ${tagsHtml}
+    ${noteHtml}
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  </div>`;
+}
+
+function renderFreeItems() {
+  renderReport();
+  const container = document.getElementById('freeItemsList');
+  if (freeItems.length === 0) {
+    container.innerHTML = '<p style="color:#bbb;font-size:0.85rem;text-align:center;padding:0.5rem">עדיין אף אחד לא הוסיף כלום – היו ראשונים! 🙂</p>';
+    return;
+  }
+  const isAdminUser = currentUser === 'מנהל';
+  container.innerHTML = freeItems.map(item => {
+    const isMe = item.who === currentUser;
+    const withinMinute = isMe && item.ts && item.ts > 0 && (Date.now() - item.ts) < 60000;
+    const canEdit = withinMinute || isAdminUser;
+    const noteDisplay = (item.note && currentUser === 'מנהל') ? `<div style="font-size:0.75rem;color:var(--brown);margin-top:0.2rem;width:100%">📝 ${item.note}</div>` : '';
+    return `<div class="free-item" id="free-item-${item.id}" style="flex-wrap:wrap">
+      <span class="free-item-text">${item.text}</span>
+      <span class="free-item-who">👤 ${item.who}</span>
+      ${canEdit ? `
+        <button class="free-edit-btn" onclick="startEditFreeItem('${item.id}', '${item.text.replace(/'/g, "\\'")}', '${item.who.replace(/'/g, "\\'")}', ${isAdminUser}, '${(item.note||'').replace(/'/g, "\\'")}')" title="עריכה">✏️</button>
+        <button class="free-delete-btn" onclick="deleteFreeItem('${item.id}')">✕</button>
+      ` : ''}
+      ${noteDisplay}
+    </div>`;
+  }).join('');
+}
+
+
+window.startEditName = function(id) {
+  const card = document.getElementById('item-card-' + id);
+  if (!card) return;
+  const editRow = document.createElement('div');
+  editRow.id = 'edit-row-' + id;
+  editRow.style.cssText = 'display:flex;gap:0.5rem;margin-top:0.6rem;';
+  editRow.innerHTML = `
+    <input class="free-input" style="flex:1" value="${currentUser}" id="edit-name-${id}" placeholder="שם חדש..." />
+    <button class="free-add-btn" onclick="saveEditName('${id}')">שמור</button>
+    <button style="background:none;border:1px solid #ccc;border-radius:8px;padding:0 0.7rem;cursor:pointer;font-family:Arial" onclick="this.parentElement.remove()">ביטול</button>
+  `;
+  // Remove existing edit row if any
+  const existing = document.getElementById('edit-row-' + id);
+  if (existing) existing.remove();
+  card.appendChild(editRow);
+  document.getElementById('edit-name-' + id).focus();
+};
+
+window.saveEditName = async function(id) {
+  const input = document.getElementById('edit-name-' + id);
+  const newName = input ? input.value.trim() : '';
+  if (!newName) { showToast('אנא הכניסו שם'); return; }
+  const current = state[id] || [];
+  const updated = current.map(n => n === currentUser ? newName : n);
+  await setDoc(docRef, { ...state, [id]: updated });
+  currentUser = newName;
+  localStorage.setItem('beachPartyUser', newName);
+  document.getElementById('activeUserName').textContent = '👋 שלום, ' + newName + '!';
+  showToast('השם עודכן ל־' + newName + ' ✅');
+};
+
+window.startEditFreeItem = function(id, currentText, currentWho, isAdmin, currentNote) {
+  const div = document.getElementById('free-item-' + id);
+  if (!div) return;
+  const isAdminBool = isAdmin === true || isAdmin === 'true';
+  const whoField = isAdminBool
+    ? `<input class="free-input" style="width:110px;flex:none" value="${currentWho}" id="edit-who-${id}" placeholder="שם מתנדב" />`
+    : '';
+  const noteField = isAdminBool
+    ? `<input class="free-input" style="width:100%;margin-top:0.4rem" value="${currentNote || ''}" id="edit-note-${id}" placeholder="📝 הערה (אופציונלי)..." />`
+    : '';
+  div.innerHTML = `
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;width:100%">
+      ${whoField}
+      <input class="free-input" style="flex:1;min-width:120px" value="${currentText}" id="edit-input-${id}" placeholder="מה מביאים?" />
+      <button class="free-add-btn" onclick="saveEditFreeItem('${id}', ${isAdminBool})">שמור</button>
+      <button class="free-delete-btn" style="margin-right:0.3rem" onclick="renderFreeItems()">ביטול</button>
+    </div>
+    ${noteField}
+  `;
+  document.getElementById('edit-input-' + id).focus();
+};
+
+window.saveEditFreeItem = async function(id, isAdmin) {
+  const input = document.getElementById('edit-input-' + id);
+  const newText = input ? input.value.trim() : '';
+  if (!newText) { showToast('אנא כתבו טקסט'); return; }
+  let newWho = null;
+  const isAdminBool2 = isAdmin === true || isAdmin === 'true';
+  if (isAdminBool2) {
+    const whoInput = document.getElementById('edit-who-' + id);
+    newWho = whoInput ? whoInput.value.trim() : null;
+    if (!newWho) { showToast('אנא הכניסו שם מתנדב'); return; }
+  }
+  let newNote = null;
+  if (isAdminBool2) {
+    const noteInp = document.getElementById('edit-note-' + id);
+    newNote = noteInp ? noteInp.value.trim() : null;
+  }
+  const updated = freeItems.map(i => {
+    if (i.id !== id) return i;
+    return { ...i, text: newText, ...(isAdminBool2 && newWho ? { who: newWho } : {}), ...(newNote !== null ? { note: newNote } : {}) };
+  });
+  await setDoc(freeRef, { items: updated });
+  showToast('עודכן! ✅');
+};
+
+window.openModal = function() {
+  let html = ITEMS.map(item => {
+    const rawV = state[item.id] || [];
+    const v = rawV.map(e => typeof e === 'object' ? e.name : e);
+    return `<div class="summary-item">
+      <span class="summary-item-name">${item.name} (${v.length}/${item.slots})</span>
+      ${v.length > 0 ? `<span class="summary-names">${v.join(', ')}</span>` : `<span class="summary-empty">עדיין אף אחד</span>`}
+    </div>`;
+  }).join('');
+  if (freeItems.length > 0) {
+    html += `<div class="summary-divider">✨ הוספות חופשיות</div>`;
+    html += freeItems.map(item => `<div class="summary-item"><span class="summary-item-name">${item.text}</span><span class="summary-names">${item.who}</span></div>`).join('');
+  }
+  document.getElementById('summaryContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('open');
+};
+
+window.closeModal = function(e) {
+  if (!e || e.target === document.getElementById('modalOverlay') || e.currentTarget.tagName === 'BUTTON') {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+};
+
+window.copyToClipboard = function() {
+  const lines = ['☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*\n'];
+  ITEMS.forEach(item => {
+    const raw = state[item.id] || [];
+    const v = raw.map(e => typeof e === 'object' ? e.name : e);
+    lines.push(`• ${item.name} (${v.length}/${item.slots}): ${v.length > 0 ? v.join(', ') : '—'}`);
+  });
+  if (freeItems.length > 0) {
+    lines.push('\n✨ *הוספות חופשיות:*');
+    freeItems.forEach(item => { lines.push(`• ${item.text} – ${item.who}`); });
+  }
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    showToast('הועתק! 📋 אפשר להדביק בוואטסאפ');
+    window.closeModal();
+  });
+};
+
+
+function renderReport() {
+  const tbody = document.getElementById('reportBody');
+  if (!tbody) return;
+  // Update thead based on adminCols (only for admin)
+  const isAdminView = currentUser === 'מנהל';
+  const activeCols = isAdminView ? adminCols : ALL_COLS.filter(c => c.key !== 'notes').map(c => c.key);
+  const thead = document.querySelector('.report-table thead tr');
+  if (thead) {
+    thead.innerHTML = ALL_COLS.filter(c => activeCols.includes(c.key) || c.always)
+      .map(c => `<th${c.key === 'registered' ? ' class="col-registered"' : ''}>${c.label}</th>`).join('');
+  }
+  const allItemsR = getAllItems();
+  let rows = allItemsR.map(item => {
+    const raw = state[item.id] || [];
+    const v = raw.map(e => typeof e === 'object' ? e.name : e);
+    const effSlots = (slotsState && slotsState[item.id] != null) ? slotsState[item.id] : item.slots;
+    const isFull = v.length >= effSlots;
+    const names = v.length > 0 ? v.join(', ') : '—';
+    const badge = isFull
+      ? '<span class="badge-full">✅ מלא</span>'
+      : '<span class="badge-missing">⚠️ חסרים</span>';
+    const colMap = {
+      name: item.name, volunteers: names,
+      registered: v.length, needed: effSlots, status: badge, notes: itemNotes[item.id] || ''
+    };
+    const tds = ALL_COLS.filter(c => activeCols.includes(c.key) || c.always)
+      .map(c => `<td${c.key === 'registered' ? ' class="col-registered"' : ''}${c.key === 'status' || c.key === 'registered' || c.key === 'needed' ? ' style="text-align:center"' : ''}>${colMap[c.key]}</td>`).join('');
+    return '<tr class="' + (isFull ? 'row-full' : 'row-missing') + '">' + tds + '</tr>';
+  }).join('');
+  if (freeItems.length > 0) {
+    rows += '<tr><td colspan="5" style="background:#fff8e1;font-weight:700;padding:0.6rem 0.7rem;border-top:2px solid var(--sand)">✨ הוספות חופשיות</td></tr>';
+    rows += freeItems.map(item =>
+      '<tr><td>' + item.text + '</td><td>' + item.who + '</td><td colspan="3"></td></tr>'
+    ).join('');
+  }
+  tbody.innerHTML = rows;
+}
+
+
+// ── Admin panel visibility ──
+function updateAdminPanel() {
+  const panel = document.getElementById('adminPanel');
+  if (panel) panel.style.display = currentUser === 'מנהל' ? 'block' : 'none';
+  if (currentUser === 'מנהל') renderColToggles();
+}
+
+
+
+// ── Column toggles ──
+window.toggleColSettings = function() {
+  const el = document.getElementById('colSettings');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+};
+
+function renderColToggles() {
+  const container = document.getElementById('colToggles');
+  if (!container) return;
+  container.innerHTML = ALL_COLS.filter(c => !c.always).map(col => {
+    const checked = adminCols.includes(col.key);
+    return `<label class="col-toggle ${checked ? 'active' : ''}">
+      <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleCol('${col.key}', this.checked)" />
+      ${col.label}
+    </label>`;
+  }).join('');
+}
+
+window.toggleCol = function(key, checked) {
+  if (checked && !adminCols.includes(key)) adminCols.push(key);
+  if (!checked) adminCols = adminCols.filter(k => k !== key);
+  localStorage.setItem('adminCols', JSON.stringify(adminCols));
+  renderColToggles();
+  renderReport();
+};
+
+// ── Add item ──
+window.openAddItemModal = function() {
+  document.getElementById('newItemName').value = '';
+  document.getElementById('newItemSlots').value = '1';
+  if (document.getElementById('newItemNote')) document.getElementById('newItemNote').value = '';
+  // Populate categories
+  const allCats = [...new Set(getAllItems().map(i => i.cat))];
+  const select = document.getElementById('newItemCatSelect');
+  select.innerHTML = allCats.map(c => `<option value="${c}">${c}</option>`).join('') +
+    '<option value="__new__">➕ קטגוריה חדשה...</option>';
+  select.value = allCats[0] || '__new__';
+  const newCatRow = document.getElementById('newCatRow');
+  if (newCatRow) newCatRow.style.display = 'none';
+  if (document.getElementById('newItemCat')) document.getElementById('newItemCat').value = '';
+  document.getElementById('addItemModalOverlay').classList.add('open');
+};
+
+window.toggleNewCat = function(val) {
+  const row = document.getElementById('newCatRow');
+  if (row) row.style.display = val === '__new__' ? 'flex' : 'none';
+};
+
+window.closeAddItemModal = function(e) {
+  if (!e || e.target === document.getElementById('addItemModalOverlay') || e.currentTarget.tagName === 'BUTTON') {
+    document.getElementById('addItemModalOverlay').classList.remove('open');
+  }
+};
+
+window.saveNewItem = async function() {
+  const name = document.getElementById('newItemName').value.trim();
+  const selectVal = document.getElementById('newItemCatSelect').value;
+  const cat = selectVal === '__new__'
+    ? (document.getElementById('newItemCat').value.trim() || '➕ נוסף')
+    : selectVal;
+  const slots = parseInt(document.getElementById('newItemSlots').value) || 1;
+  if (!name) { showToast('אנא הכניסו שם פריט'); return; }
+  const noteVal = document.getElementById('newItemNote') ? document.getElementById('newItemNote').value.trim() : '';
+  const newItem = { id: 'extra_' + Date.now(), name, cat, slots };
+  await setDoc(extraItemsRef, { items: [...extraItems, newItem] });
+  // init state for new item
+  if (!state[newItem.id]) await setDoc(docRef, { ...state, [newItem.id]: [] });
+  // save note if provided
+  if (noteVal) await setDoc(itemNotesRef, { ...itemNotes, [newItem.id]: noteVal });
+  closeAddItemModal();
+  showToast('פריט נוסף! ✅');
+};
+
+window.deleteExtraItem = async function(id) {
+  if (!confirm('למחוק פריט זה?')) return;
+  await setDoc(extraItemsRef, { items: extraItems.filter(e => e.id !== id) });
+  const newState = { ...state };
+  delete newState[id];
+  await setDoc(docRef, newState);
+  showToast('פריט נמחק');
+};
+
+let adminCurrentId = null;
+
+window.openAdminEdit = function(id) {
+  adminCurrentId = id;
+  const item = ITEMS.find(i => i.id === id);
+  const rawVols = state[id] || [];
+  const volunteers = rawVols.map(e => typeof e === 'object' ? e.name : e);
+  const currentSlots = (slotsState && slotsState[id] != null) ? slotsState[id] : item.slots;
+  document.getElementById('adminModalTitle').textContent = '✏️ עריכת שמות – ' + item.name;
+  const currentNote = itemNotes[id] || '';
+  
+  // Build input rows for each existing volunteer + empty slots
+  let nameRowsHtml = '';
+  for (let i = 0; i < currentSlots; i++) {
+    const val = volunteers[i] || '';
+    nameRowsHtml += `<div class="admin-name-row">
+      <span class="admin-name-label">מתנדב ${i+1}:</span>
+      <input class="admin-name-input" id="admin-name-${id}-${i}" value="${val}" placeholder="ריק – אין מתנדב" />
+    </div>`;
+  }
+  const slotsRow = `<div class="admin-name-row" style="margin-bottom:1rem;padding-bottom:0.8rem;border-bottom:2px solid var(--sand)">
+    <span class="admin-name-label" style="font-weight:700;color:var(--green-deep)">כמות נדרשת:</span>
+    <input class="admin-name-input" type="number" min="1" max="20" id="admin-slots-${id}" value="${currentSlots}" style="width:80px;flex:none;text-align:center" oninput="refreshAdminNameFields('${id}')" />
+  </div>`;
+  const noteRow = `<div class="admin-name-row" style="margin-top:0.8rem;padding-top:0.8rem;border-top:2px solid var(--sand)">
+    <span class="admin-name-label">📝 הערה:</span>
+    <input class="admin-name-input" id="admin-note-${id}" value="${currentNote}" placeholder="הערה לפריט זה..." />
+  </div>`;
+  document.getElementById('adminModalBody').innerHTML = slotsRow + `<div id="admin-names-${id}">${nameRowsHtml}</div>` + noteRow;
+  document.getElementById('adminModalOverlay').classList.add('open');
+};
+
+
+window.refreshAdminNameFields = function(id) {
+  const slotsInput = document.getElementById('admin-slots-' + id);
+  const newCount = parseInt(slotsInput.value) || 1;
+  const rawVols = state[id] || [];
+  const currentNames = rawVols.map(e => typeof e === 'object' ? e.name : e);
+  // Rebuild only the name rows (not the slots row)
+  const container = document.getElementById('admin-names-' + id);
+  if (!container) return;
+  let nameRows = '';
+  for (let i = 0; i < newCount; i++) {
+    const val = currentNames[i] || '';
+    nameRows += `<div class="admin-name-row">
+      <span class="admin-name-label">מתנדב ${i+1}:</span>
+      <input class="admin-name-input" id="admin-name-${id}-${i}" value="${val}" placeholder="ריק – אין מתנדב" />
+    </div>`;
+  }
+  container.innerHTML = nameRows;
+};
+
+window.saveAdminEdit = async function() {
+  if (!adminCurrentId) return;
+  const item = ITEMS.find(i => i.id === adminCurrentId);
+  const rawVols2 = state[adminCurrentId] || [];
+  const slotsInputSave = document.getElementById('admin-slots-' + adminCurrentId);
+  const finalSlots = slotsInputSave ? (parseInt(slotsInputSave.value) || 1) : 1;
+  const newVolunteers = [];
+  for (let i = 0; i < finalSlots; i++) {
+    const input = document.getElementById('admin-name-' + adminCurrentId + '-' + i);
+    const val = input ? input.value.trim() : '';
+    if (val) {
+      // preserve original entry if name unchanged, else create new with ts=0
+      const orig = rawVols2[i];
+      const origName = orig ? (typeof orig === 'object' ? orig.name : orig) : '';
+      if (origName === val && typeof orig === 'object') {
+        newVolunteers.push(orig);
+      } else {
+        newVolunteers.push({ name: val, ts: 0 });
+      }
+    }
+  }
+  // Save slots
+  if (finalSlots && finalSlots > 0) {
+    await setDoc(slotsRef, { ...slotsState, [adminCurrentId]: finalSlots });
+  }
+  await setDoc(docRef, { ...state, [adminCurrentId]: newVolunteers });
+  // Save item note
+  const noteInput = document.getElementById('admin-note-' + adminCurrentId);
+  if (noteInput) {
+    await setDoc(itemNotesRef, { ...itemNotes, [adminCurrentId]: noteInput.value.trim() });
+  }
+  closeAdminModal();
+  showToast('עודכן בהצלחה ✅');
+};
+
+window.closeAdminModal = function(e) {
+  if (!e || e.target === document.getElementById('adminModalOverlay') || e.currentTarget.tagName === 'BUTTON') {
+    document.getElementById('adminModalOverlay').classList.remove('open');
+    adminCurrentId = null;
+  }
+};
+
+
+window.exportToExcel = function() {
+  if (typeof XLSX === 'undefined') {
+    showToast('טוען ספריה...');
+    const s = document.createElement('script');
+    s.src = 'https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js';
+    s.onload = () => { showToast('נטען! לחצו שוב'); };
+    document.head.appendChild(s);
+    return;
+  }
+  const allItemsE = getAllItems();
+  const notesText = '';
+
+  // Header row
+  const headers = ['פריט', 'קטגוריה', 'מתנדבים', 'נרשמו', 'צריך', 'מצב', 'הערות'];
+  
+  // Data rows
+  const rows = allItemsE.map(item => {
+    const raw = state[item.id] || [];
+    const v = raw.map(e => typeof e === 'object' ? e.name : e);
+    const effSlots = (slotsState && slotsState[item.id] != null) ? slotsState[item.id] : item.slots;
+    const isFull = v.length >= effSlots;
+    return [
+      item.name,
+      item.cat,
+      v.join(', ') || '—',
+      v.length,
+      effSlots,
+      isFull ? 'מלא ✅' : 'חסרים ⚠️',
+      itemNotes[item.id] || ''
+    ];
+  });
+
+  // Free items section
+  const freeRows = freeItems.map(item => [
+    item.text, '✨ הוספות חופשיות', item.who, '', '', '', item.note || ''
+  ]);
+
+  // Notes row
+  const notesRow = [];
+
+  // Build worksheet data
+  const wsData = [
+    ['☮️ מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00'],
+    [],
+    headers,
+    ...rows,
+    ...(freeRows.length ? [[''], ['✨ הוספות חופשיות', 'מי מביא', 'הערה'], ...freeRows.map(r => [r[0], r[2], r[6] || ''])] : []),
+    ...notesRow
+  ];
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Column widths
+  ws['!cols'] = [
+    { wch: 28 }, { wch: 16 }, { wch: 30 }, { wch: 10 }, { wch: 10 }, { wch: 12 }
+  ];
+
+  // Set RTL for the worksheet
+  ws['!views'] = [{ rightToLeft: true }];
+  // Set RTL on workbook level too
+  if (!wb.Workbook) wb.Workbook = {};
+  if (!wb.Workbook.Views) wb.Workbook.Views = [];
+  wb.Workbook.Views[0] = { RTL: true };
+  XLSX.utils.book_append_sheet(wb, ws, 'מסיבת חוף הצוק');
+  XLSX.writeFile(wb, 'beach-party-30-07-2026.xlsx');
+  showToast('קובץ אקסל הורד! 📊');
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+initDB();
+updateAdminPanel();
+renderItems();
+renderFreeItems();
+</script>
+
+
+</body></html>
