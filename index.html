@@ -282,7 +282,7 @@
   <div class="event-info">
     <span class="event-badge">📅 חמישי 30.7</span>
     <span class="event-badge">⏰ 18:00</span>
-    <span class="event-badge">📍 חוף הצוק – מגרש החניה</span>
+    <span class="event-badge">📍 חוף הצוק</span>
   </div>
   <div id="countdownLabel" style="color:rgba(255,255,255,0.9);font-size:1.1rem;font-weight:700;font-family:inherit;margin-top:0.8rem">⏳ הספירה לאחור:</div>
   <div id="countdown" class="countdown"></div>
@@ -1138,7 +1138,7 @@ window.closeModal = function(e) {
 };
 
 window.copyToClipboard = function() {
-  const lines = ['☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*', '📍 חוף הצוק – מגרש החניה\n'];
+  const lines = ['☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*', '📍 חוף הצוק\n'];
   getAllItems().forEach(item => {
     const raw = state[item.id] || [];
     const v = raw.map(e => typeof e === 'object' ? e.name : e);
