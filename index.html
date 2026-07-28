@@ -2,6 +2,8 @@
 <html lang="he" dir="rtl"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- הדף מכיל מספרי טלפון של מי שנותן טרמפ — שלא יופיע בחיפוש -->
+<meta name="robots" content="noindex, nofollow">
 <title>מסיבת חוף הצוק ☮️ 30.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,6 +180,30 @@
   .col-toggle.active { background: rgba(74,140,63,0.2); font-weight: 700; }
   .summary-divider { font-family: inherit; color: var(--brown); margin: 1rem 0 0.5rem; font-size: 0.95rem; }
 
+  /* ── לוח טרמפים ── */
+  .rides-section { background: #fff; border: 2px dashed var(--teal); border-radius: 16px; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+  .rides-section .category-title { border-bottom-color: var(--teal); color: var(--teal); }
+  .ride-form { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1rem; }
+  .ride-form input { border: 2px solid var(--sand); border-radius: 10px; padding: 0.55rem 0.8rem; font-family: inherit; font-size: 0.92rem; background: var(--cream); direction: rtl; min-width: 0; }
+  .ride-form input:focus { outline: none; border-color: var(--teal); background: #fff; }
+  .ride-form .f-from { flex: 1 1 160px; }
+  .ride-form .f-phone { flex: 1 1 130px; direction: ltr; text-align: right; }
+  .ride-form .f-seats { flex: 0 0 68px; text-align: center; }
+  .ride-add-btn { background: var(--teal); color: #fff; border: none; border-radius: 10px; padding: 0 1.1rem; font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; flex: 0 0 auto; }
+  .ride-add-btn:hover { filter: brightness(1.1); }
+  .ride-card { border: 2px solid rgba(31,138,138,0.35); background: #f2fbfb; border-radius: 13px; padding: 0.8rem 1rem; margin-bottom: 0.55rem; }
+  .ride-card.is-full { border-color: var(--sand); background: #f5f2ec; opacity: 0.75; }
+  .ride-top { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .ride-driver { font-weight: 700; font-size: 0.97rem; }
+  .ride-from { font-size: 0.87rem; color: var(--text); }
+  .ride-seats { font-size: 0.76rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 2rem; background: rgba(31,138,138,0.15); color: var(--teal); white-space: nowrap; }
+  .ride-full-tag { font-size: 0.76rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 2rem; background: rgba(0,0,0,0.08); color: #777; }
+  .ride-actions { display: flex; gap: 0.4rem; margin-top: 0.6rem; flex-wrap: wrap; }
+  .ride-btn { border: none; border-radius: 9px; padding: 0.4rem 0.85rem; font-family: inherit; font-size: 0.84rem; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; }
+  .ride-btn.wa { background: #25d366; color: #fff; }
+  .ride-btn.tg { background: #229ed9; color: #fff; }
+  .ride-btn.ghost { background: transparent; color: var(--brown); border: 1.5px solid var(--sand); }
+  .ride-btn.danger { background: transparent; color: var(--red-soft); border: 1.5px solid var(--red-soft); }
   .report-section { background: #fff; border-radius: 16px; padding: 1.2rem 0.6rem; margin-top: 1.5rem; border: 1.5px solid var(--sand); box-shadow: 0 1px 6px rgba(0,0,0,0.04); overflow: hidden; }
   .report-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   @media (max-width: 480px) { .report-table { font-size: 0.62rem; } .report-table th, .report-table td { padding: 0.35rem 0.3rem; } .report-table .col-registered { display: none; } }
@@ -284,6 +310,7 @@
       <button class="admin-tool-btn" onclick="openAddItemModal()">➕ הוסף פריט</button>
       <button class="admin-tool-btn secondary" onclick="toggleColSettings()">📊 עמודות דוח</button>
       <button class="admin-tool-btn secondary" onclick="exportToExcel()">⬇️ ייצוא לאקסל</button>
+      <button class="admin-tool-btn secondary" onclick="openModal()">📋 סיכום לוואטסאפ</button>
     </div>
     <div id="colSettings" style="display:none;margin-bottom:0.8rem">
       <div style="font-size:0.82rem;font-weight:700;color:var(--green-deep);margin-bottom:0.4rem">בחר עמודות להצגה בדוח:</div>
@@ -303,6 +330,20 @@
       <button class="free-add-btn" onclick="addFreeItem()">+ הוסף</button>
     </div>
     <div id="freeItemsList"></div>
+  </div>
+
+  <div class="rides-section">
+    <div class="category-title">🚗 לוח טרמפים</div>
+    <div style="font-size:0.83rem;color:var(--brown);margin-bottom:0.8rem">
+      נותנים טרמפ? מלאו מאיפה אתם יוצאים ואיך להשיג אתכם. מי שצריך טרמפ ישלח לכם הודעה.
+    </div>
+    <div class="ride-form">
+      <input class="f-from" id="rideFrom" type="text" placeholder="מאיפה יוצאים? (למשל: רמת גן)">
+      <input class="f-phone" id="ridePhone" type="tel" inputmode="tel" placeholder="050-1234567">
+      <input class="f-seats" id="rideSeats" type="number" min="1" max="8" value="3" title="מספר מקומות פנויים">
+      <button class="ride-add-btn" onclick="addRide()">+ אני מסיע</button>
+    </div>
+    <div id="ridesList"></div>
   </div>
 
   <div class="report-section">
@@ -417,6 +458,9 @@ let itemNotes = {}; // {itemId: noteText}
 // פריטים קבועים שהמנהל "הסתיר" — לא נמחקים מהקוד, רק לא מוצגים (וניתן להחזיר)
 const hiddenRef = doc(db, EVENT_COLLECTION, 'hiddenItems');
 let hiddenIds = [];
+// לוח טרמפים: [{id, name, phone, from, seats, full, ts}]
+const ridesRef = doc(db, EVENT_COLLECTION, 'rides');
+let rides = [];
 let slotsState = {};
 let extraItems = []; // [{id,name,cat,slots}]
 let adminCols = JSON.parse(localStorage.getItem('adminCols') || 'null');
@@ -472,6 +516,16 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
+// רענון תקופתי כדי שכפתורי "ביטול"/"עריכה" ייעלמו כשחלון הדקה נגמר,
+// גם אם אף אחד אחר לא עשה שינוי בינתיים
+setInterval(() => {
+  const live = e => typeof e === 'object' && e.ts > 0 && (Date.now() - e.ts) < 75000;
+  const anyLive = Object.values(state).some(arr => Array.isArray(arr) && arr.some(live))
+    || freeItems.some(i => i.ts > 0 && (Date.now() - i.ts) < 75000)
+    || rides.some(r => r.ts > 0 && (Date.now() - r.ts) < 75000);
+  if (anyLive) { renderItems(); renderFreeItems(); renderRides(); }
+}, 15000);
+
 async function initDB() {
   try {
     const snap = await getDoc(docRef);
@@ -489,6 +543,10 @@ async function initDB() {
     if (!extraSnap.exists()) await setDoc(extraItemsRef, { items: [] });
     const itemNotesSnap = await getDoc(itemNotesRef);
     if (!itemNotesSnap.exists()) await setDoc(itemNotesRef, {});
+    const hiddenSnap = await getDoc(hiddenRef);
+    if (!hiddenSnap.exists()) await setDoc(hiddenRef, { ids: [] });
+    const ridesSnap = await getDoc(ridesRef);
+    if (!ridesSnap.exists()) await setDoc(ridesRef, { items: [] });
     document.getElementById('loadingOverlay').style.display = 'none';
     document.getElementById('statusDot').className = 'status-dot connected';
     document.getElementById('statusText').textContent = 'מחובר – מתעדכן בזמן אמת 🟢';
@@ -506,6 +564,7 @@ onSnapshot(slotsRef, (snap) => { if (snap.exists()) { slotsState = snap.data(); 
 onSnapshot(extraItemsRef, (snap) => { if (snap.exists()) { extraItems = snap.data().items || []; renderItems(); } });
 onSnapshot(itemNotesRef, (snap) => { if (snap.exists()) { itemNotes = snap.data(); renderItems(); } });
 onSnapshot(hiddenRef, (snap) => { hiddenIds = snap.exists() ? (snap.data().ids || []) : []; renderItems(); updateAdminPanel(); });
+onSnapshot(ridesRef, (snap) => { rides = snap.exists() ? (snap.data().items || []) : []; renderRides(); });
 
 if (currentUser) {
   document.getElementById('activeUserName').textContent = '👋 שלום, ' + currentUser + '!';
@@ -576,6 +635,11 @@ window.cancel = async function(id) {
   if (!currentUser) return;
   const mine = (state[id] || []).filter(e => (typeof e === 'object' ? e.name : e) === currentUser);
   if (!mine.length) return;
+  // אכיפת חלון הדקה גם כאן — הכפתור לבדו לא מספיק, הוא נעלם רק ברינדור הבא
+  if (currentUser !== 'מנהל') {
+    const fresh = mine.some(e => typeof e === 'object' && e.ts > 0 && (Date.now() - e.ts) < 60000);
+    if (!fresh) { showToast('עברה הדקה לביטול – פנו למנהל 🙂'); renderItems(); return; }
+  }
   await updateDoc(docRef, { [id]: arrayRemove(...mine) });
   showToast('ביטול הרשמה');
 };
@@ -605,6 +669,97 @@ window.deleteFreeItem = async function(id) {
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ── לוח טרמפים ──
+
+// מנרמל מספר ישראלי לפורמט בינלאומי (972501234567) עבור קישורי וואטסאפ/טלגרם
+function normalizePhone(raw) {
+  const d = String(raw || '').replace(/[^\d+]/g, '').replace(/^\+/, '');
+  if (/^972\d{9}$/.test(d)) return d;
+  if (/^0\d{9}$/.test(d)) return '972' + d.slice(1);
+  if (/^\d{9}$/.test(d) && d[0] === '5') return '972' + d;
+  return null;
+}
+
+function prettyPhone(intl) {
+  const local = '0' + String(intl).slice(3);
+  return local.slice(0, 3) + '-' + local.slice(3);
+}
+
+window.addRide = async function() {
+  if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return; }
+  if (currentUser === 'מנהל') { showToast('היכנסו בשם שלכם כדי להציע טרמפ'); return; }
+  const from = document.getElementById('rideFrom').value.trim();
+  const phoneRaw = document.getElementById('ridePhone').value.trim();
+  const seats = parseInt(document.getElementById('rideSeats').value) || 1;
+  if (!from) { showToast('כתבו מאיפה אתם יוצאים'); return; }
+  const phone = normalizePhone(phoneRaw);
+  if (!phone) { showToast('מספר טלפון לא תקין – למשל 050-1234567'); return; }
+  if (rides.some(r => r.name === currentUser && r.from === from)) { showToast('כבר הצעת טרמפ מהמקום הזה'); return; }
+  const ride = { id: 'ride_' + Date.now(), name: currentUser, phone, from, seats, full: false, ts: Date.now() };
+  await updateDoc(ridesRef, { items: arrayUnion(ride) });
+  document.getElementById('rideFrom').value = '';
+  document.getElementById('ridePhone').value = '';
+  showToast('תודה! הטרמפ פורסם 🚗');
+};
+
+function canEditRide(ride) {
+  if (currentUser === 'מנהל') return true;
+  return ride.name === currentUser && ride.ts && (Date.now() - ride.ts) < 60000;
+}
+
+// "מלא/פנוי" — בעל הטרמפ יכול לסמן בכל זמן, גם אחרי הדקה
+function canToggleRide(ride) {
+  return currentUser === 'מנהל' || ride.name === currentUser;
+}
+
+window.toggleRideFull = async function(id) {
+  const ride = rides.find(r => r.id === id);
+  if (!ride || !canToggleRide(ride)) { showToast('רק מי שפרסם את הטרמפ יכול לסמן'); return; }
+  await setDoc(ridesRef, { items: rides.map(r => r.id === id ? { ...r, full: !r.full } : r) });
+  showToast(ride.full ? 'הטרמפ סומן כפנוי 🚗' : 'הטרמפ סומן כמלא ✋');
+};
+
+window.deleteRide = async function(id) {
+  const ride = rides.find(r => r.id === id);
+  if (!ride) return;
+  if (!canEditRide(ride)) { showToast('אפשר להסיר רק עד דקה מהפרסום – פנו למנהל'); return; }
+  if (!confirm('להסיר את הטרמפ מהלוח?')) return;
+  await setDoc(ridesRef, { items: rides.filter(r => r.id !== id) });
+  showToast('הטרמפ הוסר');
+};
+
+function renderRides() {
+  const box = document.getElementById('ridesList');
+  if (!box) return;
+  if (!rides.length) {
+    box.innerHTML = '<p style="color:#bbb;font-size:0.85rem;text-align:center;padding:0.5rem">עדיין אין טרמפים – היו הראשונים להציע 🚗</p>';
+    return;
+  }
+  const sorted = [...rides].sort((a, b) => (a.full === b.full) ? (a.ts || 0) - (b.ts || 0) : (a.full ? 1 : -1));
+  const msg = encodeURIComponent('היי! ראיתי שאתם נוסעים למסיבת חוף הצוק – אפשר טרמפ?');
+  box.innerHTML = sorted.map(r => {
+    const seats = r.seats || 1;
+    const canEdit = canEditRide(r);
+    const canToggle = canToggleRide(r);
+    return `<div class="ride-card ${r.full ? 'is-full' : ''}">
+      <div class="ride-top">
+        <span class="ride-driver">👤 ${esc(r.name)}</span>
+        <span class="ride-from">📍 יוצא מ${esc(r.from)}</span>
+        ${r.full
+          ? '<span class="ride-full-tag">✋ מלא</span>'
+          : `<span class="ride-seats">💺 ${seats} מקומות</span>`}
+      </div>
+      <div class="ride-actions">
+        <a class="ride-btn wa" href="https://wa.me/${r.phone}?text=${msg}" target="_blank" rel="noopener">💬 וואטסאפ</a>
+        <a class="ride-btn tg" href="https://t.me/+${r.phone}" target="_blank" rel="noopener">✈️ טלגרם</a>
+        <span class="ride-btn ghost" style="cursor:default">📞 ${prettyPhone(r.phone)}</span>
+        ${canToggle ? `<button class="ride-btn ghost" onclick="toggleRideFull('${r.id}')">${r.full ? '↩️ סמן כפנוי' : '✋ סמן כמלא'}</button>` : ''}
+        ${canEdit ? `<button class="ride-btn danger" onclick="deleteRide('${r.id}')">🗑️ הסר</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function getAllItems() {
@@ -694,37 +849,6 @@ function renderFreeItems() {
 }
 
 
-window.startEditName = function(id) {
-  const card = document.getElementById('item-card-' + id);
-  if (!card) return;
-  const editRow = document.createElement('div');
-  editRow.id = 'edit-row-' + id;
-  editRow.style.cssText = 'display:flex;gap:0.5rem;margin-top:0.6rem;';
-  editRow.innerHTML = `
-    <input class="free-input" style="flex:1" value="${currentUser}" id="edit-name-${id}" placeholder="שם חדש..." />
-    <button class="free-add-btn" onclick="saveEditName('${id}')">שמור</button>
-    <button style="background:none;border:1px solid #ccc;border-radius:8px;padding:0 0.7rem;cursor:pointer;font-family:Arial" onclick="this.parentElement.remove()">ביטול</button>
-  `;
-  // Remove existing edit row if any
-  const existing = document.getElementById('edit-row-' + id);
-  if (existing) existing.remove();
-  card.appendChild(editRow);
-  document.getElementById('edit-name-' + id).focus();
-};
-
-window.saveEditName = async function(id) {
-  const input = document.getElementById('edit-name-' + id);
-  const newName = input ? input.value.trim() : '';
-  if (!newName) { showToast('אנא הכניסו שם'); return; }
-  const current = state[id] || [];
-  const updated = current.map(n => n === currentUser ? newName : n);
-  await setDoc(docRef, { ...state, [id]: updated });
-  currentUser = newName;
-  localStorage.setItem('beachPartyUser', newName);
-  document.getElementById('activeUserName').textContent = '👋 שלום, ' + newName + '!';
-  showToast('השם עודכן ל־' + newName + ' ✅');
-};
-
 window.startEditFreeItem = function(id) {
   const div = document.getElementById('free-item-' + id);
   const it = freeItems.find(i => i.id === id);
@@ -774,17 +898,22 @@ window.saveEditFreeItem = async function(id, isAdmin) {
 };
 
 window.openModal = function() {
-  let html = ITEMS.map(item => {
+  let html = getAllItems().map(item => {
     const rawV = state[item.id] || [];
     const v = rawV.map(e => typeof e === 'object' ? e.name : e);
+    const eff = (slotsState && slotsState[item.id] != null) ? slotsState[item.id] : item.slots;
     return `<div class="summary-item">
-      <span class="summary-item-name">${item.name} (${v.length}/${item.slots})</span>
-      ${v.length > 0 ? `<span class="summary-names">${v.join(', ')}</span>` : `<span class="summary-empty">עדיין אף אחד</span>`}
+      <span class="summary-item-name">${esc(item.name)} (${v.length}/${eff})</span>
+      ${v.length > 0 ? `<span class="summary-names">${esc(v.join(', '))}</span>` : `<span class="summary-empty">עדיין אף אחד</span>`}
     </div>`;
   }).join('');
   if (freeItems.length > 0) {
     html += `<div class="summary-divider">✨ הוספות חופשיות</div>`;
-    html += freeItems.map(item => `<div class="summary-item"><span class="summary-item-name">${item.text}</span><span class="summary-names">${item.who}</span></div>`).join('');
+    html += freeItems.map(item => `<div class="summary-item"><span class="summary-item-name">${esc(item.text)}</span><span class="summary-names">${esc(item.who)}</span></div>`).join('');
+  }
+  if (rides.length > 0) {
+    html += `<div class="summary-divider">🚗 טרמפים</div>`;
+    html += rides.map(r => `<div class="summary-item"><span class="summary-item-name">${esc(r.name)} – מ${esc(r.from)}${r.full ? ' (מלא)' : ''}</span><span class="summary-names">${prettyPhone(r.phone)}</span></div>`).join('');
   }
   document.getElementById('summaryContent').innerHTML = html;
   document.getElementById('modalOverlay').classList.add('open');
@@ -797,15 +926,20 @@ window.closeModal = function(e) {
 };
 
 window.copyToClipboard = function() {
-  const lines = ['☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*\n'];
-  ITEMS.forEach(item => {
+  const lines = ['☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*', '📍 חוף הצוק – מגרש החניה\n'];
+  getAllItems().forEach(item => {
     const raw = state[item.id] || [];
     const v = raw.map(e => typeof e === 'object' ? e.name : e);
-    lines.push(`• ${item.name} (${v.length}/${item.slots}): ${v.length > 0 ? v.join(', ') : '—'}`);
+    const eff = (slotsState && slotsState[item.id] != null) ? slotsState[item.id] : item.slots;
+    lines.push(`• ${item.name} (${v.length}/${eff}): ${v.length > 0 ? v.join(', ') : '—'}`);
   });
   if (freeItems.length > 0) {
     lines.push('\n✨ *הוספות חופשיות:*');
     freeItems.forEach(item => { lines.push(`• ${item.text} – ${item.who}`); });
+  }
+  if (rides.length > 0) {
+    lines.push('\n🚗 *טרמפים:*');
+    rides.forEach(r => { lines.push(`• ${r.name} – מ${r.from} ${r.full ? '(מלא)' : `(${r.seats || 1} מקומות)`} – ${prettyPhone(r.phone)}`); });
   }
   navigator.clipboard.writeText(lines.join('\n')).then(() => {
     showToast('הועתק! 📋 אפשר להדביק בוואטסאפ');
@@ -859,6 +993,7 @@ function updateAdminPanel() {
   if (panel) panel.style.display = currentUser === 'מנהל' ? 'block' : 'none';
   if (currentUser === 'מנהל') { renderColToggles(); renderHiddenItems(); }
   renderHowto();
+  renderRides();
 }
 
 // רשימת הפריטים המוסתרים בממשק המנהל, עם החזרה בלחיצה
