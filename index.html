@@ -100,6 +100,16 @@
   .active-user.show { display: flex; }
   .active-user span { font-size: 0.9rem; color: var(--green-deep); font-weight: 500; }
   .change-name { font-size: 0.78rem; color: var(--brown); cursor: pointer; text-decoration: underline; }
+  .contact-row { display: flex; gap: 0.7rem; margin-top: 0.6rem; flex-wrap: wrap; }
+  .contact-row .c-phone { flex: 1 1 150px; direction: ltr; text-align: right; }
+  .contact-row .c-insta { flex: 1 1 130px; direction: ltr; text-align: right; }
+  .hide-phone { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; font-size: 0.82rem; color: var(--brown); cursor: pointer; }
+  .hide-phone input { cursor: pointer; }
+  .hide-note { font-size: 0.76rem; color: var(--red-soft); margin-top: 0.3rem; display: none; }
+  .hide-note.show { display: block; }
+  /* קישורי יצירת קשר על תגית מתנדב */
+  .volunteer-tag a { text-decoration: none; margin-right: 0.25rem; }
+  .tag-locked { opacity: 0.55; margin-right: 0.25rem; }
   .category { margin-bottom: 1.2rem; }
   .category-title { font-family: inherit; font-size: 1rem; color: var(--green-deep); padding: 0.5rem 0 0.4rem; border-bottom: 2px solid var(--green-light); margin-bottom: 0.7rem; display: flex; align-items: center; gap: 0.4rem; }
 
@@ -191,6 +201,17 @@
   .ride-form .f-seats { flex: 0 0 68px; text-align: center; }
   .ride-add-btn { background: var(--teal); color: #fff; border: none; border-radius: 10px; padding: 0 1.1rem; font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; flex: 0 0 auto; }
   .ride-add-btn:hover { filter: brightness(1.1); }
+  .ride-add-btn.seek { background: var(--brown); }
+  /* שני לוחות נפרדים: מציעים / מחפשים */
+  .ride-block { border-radius: 13px; padding: 0.9rem 1rem; margin-bottom: 1rem; }
+  .ride-block.offer { background: rgba(31,138,138,0.06); border: 1.5px solid rgba(31,138,138,0.25); }
+  .ride-block.seek  { background: rgba(139,74,20,0.06);  border: 1.5px solid rgba(139,74,20,0.25); margin-bottom: 0; }
+  .ride-block-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.7rem; }
+  .ride-block.offer .ride-block-title { color: var(--teal); }
+  .ride-block.seek  .ride-block-title { color: var(--brown); }
+  .req-card { border: 2px solid rgba(139,74,20,0.3); background: #fdf8f1; border-radius: 13px; padding: 0.7rem 1rem; margin-bottom: 0.55rem; }
+  .rides-locked { display: none; background: #fff4e0; border: 1.5px solid var(--orange-border); border-radius: 11px; padding: 0.7rem 1rem; margin-bottom: 0.9rem; font-size: 0.84rem; color: var(--brown); }
+  .rides-locked.show { display: block; }
   .ride-card { border: 2px solid rgba(31,138,138,0.35); background: #f2fbfb; border-radius: 13px; padding: 0.8rem 1rem; margin-bottom: 0.55rem; }
   .ride-card.is-full { border-color: var(--sand); background: #f5f2ec; opacity: 0.75; }
   .ride-top { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
@@ -293,9 +314,18 @@
       <input class="name-input" id="nameInput" type="text" placeholder="הכניסו את שמכם...">
       <button class="name-btn" onclick="setName()">אישור</button>
     </div>
+    <div class="contact-row" id="contactRow">
+      <input class="name-input c-phone" id="phoneInput" type="tel" inputmode="tel" placeholder="טלפון (חובה) – 050-1234567">
+      <input class="name-input c-insta" id="instaInput" type="text" placeholder="אינסטגרם (לא חובה)">
+    </div>
+    <label class="hide-phone" id="hidePhoneRow">
+      <input type="checkbox" id="hidePhone">
+      <span>🔒 להסתיר את הטלפון שלי מהאחרים</span>
+    </label>
+    <div class="hide-note" id="hideNote">שימו לב: אם תסתירו את הטלפון, לא תוכלו להציע או לבקש טרמפים – אי-אפשר יהיה ליצור אתכם קשר.</div>
     <div class="active-user" id="activeUser">
       <span id="activeUserName"></span>
-      <span class="change-name" onclick="changeName()">שינוי שם</span>
+      <span class="change-name" onclick="changeName()">שינוי פרטים</span>
       <span class="change-name" onclick="logout()" style="color:var(--red-soft)">התנתקות</span>
     </div>
   </div>
@@ -334,16 +364,26 @@
 
   <div class="rides-section">
     <div class="category-title">🚗 לוח טרמפים</div>
-    <div style="font-size:0.83rem;color:var(--brown);margin-bottom:0.8rem">
-      נותנים טרמפ? מלאו מאיפה אתם יוצאים ואיך להשיג אתכם. מי שצריך טרמפ ישלח לכם הודעה.
+    <div class="rides-locked" id="ridesLocked"></div>
+
+    <div class="ride-block offer">
+      <div class="ride-block-title">🚗 מציעים טרמפ</div>
+      <div class="ride-form" id="rideOfferForm">
+        <input class="f-from" id="rideFrom" type="text" placeholder="מאיפה אתם יוצאים? (למשל: רמת גן)">
+        <input class="f-seats" id="rideSeats" type="number" min="1" max="8" value="3" title="מספר מקומות פנויים">
+        <button class="ride-add-btn" onclick="addRide()">+ אני מסיע</button>
+      </div>
+      <div id="ridesList"></div>
     </div>
-    <div class="ride-form">
-      <input class="f-from" id="rideFrom" type="text" placeholder="מאיפה יוצאים? (למשל: רמת גן)">
-      <input class="f-phone" id="ridePhone" type="tel" inputmode="tel" placeholder="050-1234567">
-      <input class="f-seats" id="rideSeats" type="number" min="1" max="8" value="3" title="מספר מקומות פנויים">
-      <button class="ride-add-btn" onclick="addRide()">+ אני מסיע</button>
+
+    <div class="ride-block seek">
+      <div class="ride-block-title">🙋 מחפשים טרמפ</div>
+      <div class="ride-form" id="rideSeekForm">
+        <input class="f-from" id="reqFrom" type="text" placeholder="מאיפה אתם צריכים להיאסף?">
+        <button class="ride-add-btn seek" onclick="addRideRequest()">+ אני צריך טרמפ</button>
+      </div>
+      <div id="rideReqList"></div>
     </div>
-    <div id="ridesList"></div>
   </div>
 
   <div class="report-section">
@@ -461,6 +501,12 @@ let hiddenIds = [];
 // לוח טרמפים: [{id, name, phone, from, seats, full, ts}]
 const ridesRef = doc(db, EVENT_COLLECTION, 'rides');
 let rides = [];
+// מחפשי טרמפ: [{id, name, phone, from, ts}]
+const rideReqRef = doc(db, EVENT_COLLECTION, 'rideRequests');
+let rideRequests = [];
+// פרטי קשר לפי שם: { "<שם>": {phone, instagram, hidden} }
+const contactsRef = doc(db, EVENT_COLLECTION, 'contacts');
+let contacts = {};
 let slotsState = {};
 let extraItems = []; // [{id,name,cat,slots}]
 let adminCols = JSON.parse(localStorage.getItem('adminCols') || 'null');
@@ -547,6 +593,10 @@ async function initDB() {
     if (!hiddenSnap.exists()) await setDoc(hiddenRef, { ids: [] });
     const ridesSnap = await getDoc(ridesRef);
     if (!ridesSnap.exists()) await setDoc(ridesRef, { items: [] });
+    const reqSnap = await getDoc(rideReqRef);
+    if (!reqSnap.exists()) await setDoc(rideReqRef, { items: [] });
+    const contactsSnap = await getDoc(contactsRef);
+    if (!contactsSnap.exists()) await setDoc(contactsRef, {});
     document.getElementById('loadingOverlay').style.display = 'none';
     document.getElementById('statusDot').className = 'status-dot connected';
     document.getElementById('statusText').textContent = 'מחובר – מתעדכן בזמן אמת 🟢';
@@ -565,27 +615,83 @@ onSnapshot(extraItemsRef, (snap) => { if (snap.exists()) { extraItems = snap.dat
 onSnapshot(itemNotesRef, (snap) => { if (snap.exists()) { itemNotes = snap.data(); renderItems(); } });
 onSnapshot(hiddenRef, (snap) => { hiddenIds = snap.exists() ? (snap.data().ids || []) : []; renderItems(); updateAdminPanel(); });
 onSnapshot(ridesRef, (snap) => { rides = snap.exists() ? (snap.data().items || []) : []; renderRides(); });
+onSnapshot(rideReqRef, (snap) => { rideRequests = snap.exists() ? (snap.data().items || []) : []; renderRides(); });
+onSnapshot(contactsRef, (snap) => { contacts = snap.exists() ? snap.data() : {}; renderItems(); renderRides(); });
 
-if (currentUser) {
-  document.getElementById('activeUserName').textContent = '👋 שלום, ' + currentUser + '!';
-  document.getElementById('activeUser').classList.add('show');
-  document.getElementById('nameInput').disabled = true;
-  document.querySelector('.name-btn').disabled = true;
-  updateAdminPanel();
+// ── פרטי קשר ──
+// המנהל הוא היחיד שנכנס בלי טלפון (הוא לא נרשם להביא ולא מציע טרמפים)
+function isAdminUserName(n) { return n === 'מנהל'; }
+function myContact() { return contacts[currentUser] || null; }
+function phoneVisible(name) {
+  const c = contacts[name];
+  return !!(c && c.phone && !c.hidden);
+}
+// מי שהסתיר את הטלפון לא יכול להציע/לבקש טרמפ — אין דרך ליצור איתו קשר
+function canUseRides() {
+  if (!currentUser || isAdminUserName(currentUser)) return false;
+  const c = myContact();
+  return !!(c && c.phone && !c.hidden);
 }
 
-window.setName = function() {
+document.getElementById('hidePhone').addEventListener('change', e => {
+  document.getElementById('hideNote').classList.toggle('show', e.target.checked);
+});
+
+// מציג/מסתיר את שדות הקשר לפי מצב ההתחברות
+function syncNameSection() {
+  const logged = !!currentUser && !changingName;
+  document.getElementById('contactRow').style.display = (logged || isAdminUserName(currentUser)) ? 'none' : 'flex';
+  document.getElementById('hidePhoneRow').style.display = (logged || isAdminUserName(currentUser)) ? 'none' : 'flex';
+  if (logged) document.getElementById('hideNote').classList.remove('show');
+  document.getElementById('nameInput').disabled = logged;
+  document.querySelector('.name-btn').disabled = logged;
+  document.getElementById('activeUser').classList.toggle('show', !!currentUser);
+  if (currentUser) {
+    const c = myContact();
+    const suffix = isAdminUserName(currentUser) ? '' : (c && c.phone ? (c.hidden ? ' · 🔒 טלפון מוסתר' : ' · 📞 ' + prettyPhone(c.phone)) : '');
+    document.getElementById('activeUserName').textContent = '👋 שלום, ' + currentUser + '!' + suffix;
+  }
+}
+
+if (currentUser) syncNameSection();
+
+window.setName = async function() {
   const val = document.getElementById('nameInput').value.trim();
   if (!val) { showToast('אנא הכניסו שם 😊'); return; }
-  if (currentUser && !changingName) { showToast('לחצו על "שינוי שם" כדי לשנות'); return; }
+  if (currentUser && !changingName) { showToast('לחצו על "שינוי פרטים" כדי לשנות'); return; }
+
+  // המנהל נכנס בלי פרטי קשר
+  if (!isAdminUserName(val)) {
+    const phoneRaw = document.getElementById('phoneInput').value.trim();
+    const phone = normalizePhone(phoneRaw);
+    if (!phone) { showToast('צריך טלפון תקין – למשל 050-1234567 📞'); document.getElementById('phoneInput').focus(); return; }
+    const instaRaw = document.getElementById('instaInput').value.trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '');
+    const hidden = document.getElementById('hidePhone').checked;
+    // merge:true מעדכן רק את הרשומה שלי ולא דורס אחרים
+    await setDoc(contactsRef, { [val]: { phone, instagram: instaRaw || '', hidden } }, { merge: true });
+
+    // הסתרת הטלפון מסירה טרמפים/בקשות קיימים — אחרת המספר היה ממשיך להופיע שם
+    if (hidden) {
+      const myRides = rides.filter(r => r.name === val);
+      const myReqs = rideRequests.filter(r => r.name === val);
+      if (myRides.length) await setDoc(ridesRef, { items: rides.filter(r => r.name !== val) });
+      if (myReqs.length) await setDoc(rideReqRef, { items: rideRequests.filter(r => r.name !== val) });
+      if (myRides.length || myReqs.length) showToast('הטרמפים שלכם הוסרו מהלוח 🔒');
+    }
+    // עדכון מספר: לרענן את המספר שנשמר בכרטיסים הקיימים
+    else {
+      if (rides.some(r => r.name === val && r.phone !== phone))
+        await setDoc(ridesRef, { items: rides.map(r => r.name === val ? { ...r, phone } : r) });
+      if (rideRequests.some(r => r.name === val && r.phone !== phone))
+        await setDoc(rideReqRef, { items: rideRequests.map(r => r.name === val ? { ...r, phone } : r) });
+    }
+  }
+
   currentUser = val;
   changingName = false;
   localStorage.setItem('beachPartyUser', currentUser);
-  document.getElementById('activeUserName').textContent = '👋 שלום, ' + currentUser + '!';
-  document.getElementById('activeUser').classList.add('show');
   document.getElementById('nameInput').value = '';
-  document.getElementById('nameInput').disabled = true;
-  document.querySelector('.name-btn').disabled = true;
+  syncNameSection();
   updateAdminPanel();
   renderItems();
   showToast('ברוך הבא ' + currentUser + '! 🎉');
@@ -595,10 +701,11 @@ window.logout = function() {
   currentUser = '';
   changingName = false;
   localStorage.removeItem('beachPartyUser');
-  document.getElementById('activeUser').classList.remove('show');
-  document.getElementById('nameInput').disabled = false;
   document.getElementById('nameInput').value = '';
-  document.querySelector('.name-btn').disabled = false;
+  document.getElementById('phoneInput').value = '';
+  document.getElementById('instaInput').value = '';
+  document.getElementById('hidePhone').checked = false;
+  syncNameSection();
   updateAdminPanel();
   renderItems();
   showToast('התנתקת בהצלחה 👋');
@@ -606,6 +713,14 @@ window.logout = function() {
 
 window.changeName = function() {
   changingName = true;
+  const c = myContact();
+  if (c) {
+    document.getElementById('phoneInput').value = c.phone ? prettyPhone(c.phone) : '';
+    document.getElementById('instaInput').value = c.instagram || '';
+    document.getElementById('hidePhone').checked = !!c.hidden;
+    document.getElementById('hideNote').classList.toggle('show', !!c.hidden);
+  }
+  syncNameSection();
   document.getElementById('nameInput').disabled = false;
   document.querySelector('.name-btn').disabled = false;
   document.getElementById('nameInput').value = currentUser;
@@ -616,8 +731,19 @@ window.changeName = function() {
 document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.setName(); });
 document.getElementById('freeInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.addFreeItem(); });
 
+// מי שנכנס לפני שהטלפון היה חובה — נבקש ממנו להשלים
+function requireContact() {
+  if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return false; }
+  if (isAdminUserName(currentUser)) return true;
+  if (myContact() && myContact().phone) return true;
+  showToast('צריך להוסיף טלפון – לחצו "שינוי פרטים" 📞');
+  window.changeName();
+  document.querySelector('.name-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  return false;
+}
+
 window.signup = async function(id) {
-  if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return; }
+  if (!requireContact()) return;
   const item = getAllItems().find(i => i.id === id);
   if (!item) return;
   const current = state[id] || [];
@@ -645,8 +771,8 @@ window.cancel = async function(id) {
 };
 
 window.addFreeItem = async function() {
-  if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return; }
   if (currentUser === 'מנהל') { showToast('מנהל לא יכול להוסיף פריטים'); return; }
+  if (!requireContact()) return;
   const val = document.getElementById('freeInput').value.trim();
   if (!val) { showToast('כתבו מה אתם רוצים להביא'); return; }
   const newItem = { id: Date.now().toString(), text: val, who: currentUser, ts: Date.now(), note: '' };
@@ -682,26 +808,68 @@ function normalizePhone(raw) {
   return null;
 }
 
+// אייקוני יצירת קשר שמופיעים ליד שם מתנדב.
+// טלפון מוסתר → 🔒 בלבד. המנהל רואה את המספר תמיד (הוא צריך לתאם).
+function contactLinks(name) {
+  const c = contacts[name];
+  if (!c || !c.phone) return '';
+  const isAdmin = currentUser === 'מנהל';
+  const insta = c.instagram
+    ? `<a href="https://instagram.com/${encodeURIComponent(c.instagram)}" target="_blank" rel="noopener" title="אינסטגרם @${esc(c.instagram)}">📷</a>`
+    : '';
+  if (c.hidden && !isAdmin) return `<span class="tag-locked" title="הטלפון מוסתר לפי בקשת המשתמש">🔒</span>${insta}`;
+  const msg = encodeURIComponent('היי! לגבי מסיבת חוף הצוק –');
+  const lock = c.hidden ? '<span class="tag-locked" title="מוסתר משאר המשתמשים">🔒</span>' : '';
+  return `${lock}<a href="https://wa.me/${c.phone}?text=${msg}" target="_blank" rel="noopener" title="וואטסאפ ${prettyPhone(c.phone)}">💬</a>${insta}`;
+}
+
 function prettyPhone(intl) {
   const local = '0' + String(intl).slice(3);
   return local.slice(0, 3) + '-' + local.slice(3);
 }
 
+// שער כניסה משותף לשני הלוחות
+function ridesGate() {
+  if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return false; }
+  if (isAdminUserName(currentUser)) { showToast('היכנסו בשם שלכם כדי להשתמש בלוח הטרמפים'); return false; }
+  if (!requireContact()) return false;
+  if (myContact().hidden) {
+    showToast('הטלפון שלכם מוסתר – אי-אפשר ליצור אתכם קשר 🔒');
+    return false;
+  }
+  return true;
+}
+
 window.addRide = async function() {
-  if (!currentUser) { showToast('קודם כל הכניסו שם 😊'); return; }
-  if (currentUser === 'מנהל') { showToast('היכנסו בשם שלכם כדי להציע טרמפ'); return; }
+  if (!ridesGate()) return;
   const from = document.getElementById('rideFrom').value.trim();
-  const phoneRaw = document.getElementById('ridePhone').value.trim();
   const seats = parseInt(document.getElementById('rideSeats').value) || 1;
   if (!from) { showToast('כתבו מאיפה אתם יוצאים'); return; }
-  const phone = normalizePhone(phoneRaw);
-  if (!phone) { showToast('מספר טלפון לא תקין – למשל 050-1234567'); return; }
   if (rides.some(r => r.name === currentUser && r.from === from)) { showToast('כבר הצעת טרמפ מהמקום הזה'); return; }
-  const ride = { id: 'ride_' + Date.now(), name: currentUser, phone, from, seats, full: false, ts: Date.now() };
+  const ride = { id: 'ride_' + Date.now(), name: currentUser, phone: myContact().phone, from, seats, full: false, ts: Date.now() };
   await updateDoc(ridesRef, { items: arrayUnion(ride) });
   document.getElementById('rideFrom').value = '';
-  document.getElementById('ridePhone').value = '';
   showToast('תודה! הטרמפ פורסם 🚗');
+};
+
+window.addRideRequest = async function() {
+  if (!ridesGate()) return;
+  const from = document.getElementById('reqFrom').value.trim();
+  if (!from) { showToast('כתבו מאיפה צריך לאסוף אתכם'); return; }
+  if (rideRequests.some(r => r.name === currentUser)) { showToast('כבר ביקשת טרמפ'); return; }
+  const req = { id: 'req_' + Date.now(), name: currentUser, phone: myContact().phone, from, ts: Date.now() };
+  await updateDoc(rideReqRef, { items: arrayUnion(req) });
+  document.getElementById('reqFrom').value = '';
+  showToast('הבקשה פורסמה – מקווים שמישהו יאסוף אתכם 🙂');
+};
+
+window.deleteRideRequest = async function(id) {
+  const req = rideRequests.find(r => r.id === id);
+  if (!req) return;
+  if (!(currentUser === 'מנהל' || req.name === currentUser)) { showToast('רק מי שפרסם יכול להסיר'); return; }
+  if (!confirm('להסיר את הבקשה מהלוח?')) return;
+  await setDoc(rideReqRef, { items: rideRequests.filter(r => r.id !== id) });
+  showToast('הבקשה הוסרה');
 };
 
 function canEditRide(ride) {
@@ -731,6 +899,25 @@ window.deleteRide = async function(id) {
 };
 
 function renderRides() {
+  renderRideRequests();
+  // הודעת נעילה למי שהסתיר טלפון / עדיין לא הזין
+  const lock = document.getElementById('ridesLocked');
+  if (lock) {
+    const c = myContact();
+    let msg = '';
+    if (currentUser && !isAdminUserName(currentUser)) {
+      if (!c || !c.phone) msg = '📞 כדי להשתמש בלוח הטרמפים צריך להזין טלפון – לחצו "שינוי פרטים" למעלה.';
+      else if (c.hidden) msg = '🔒 הטלפון שלכם מוסתר, ולכן אי-אפשר להציע או לבקש טרמפ – אף אחד לא יוכל ליצור אתכם קשר. אפשר לבטל את ההסתרה ב"שינוי פרטים".';
+    }
+    lock.classList.toggle('show', !!msg);
+    lock.textContent = msg;
+  }
+  const disabled = !canUseRides();
+  ['rideOfferForm', 'rideSeekForm'].forEach(fid => {
+    const f = document.getElementById(fid);
+    if (f) f.querySelectorAll('input,button').forEach(el => { el.disabled = disabled; el.style.opacity = disabled ? '0.5' : ''; });
+  });
+
   const box = document.getElementById('ridesList');
   if (!box) return;
   if (!rides.length) {
@@ -757,6 +944,31 @@ function renderRides() {
         <span class="ride-btn ghost" style="cursor:default">📞 ${prettyPhone(r.phone)}</span>
         ${canToggle ? `<button class="ride-btn ghost" onclick="toggleRideFull('${r.id}')">${r.full ? '↩️ סמן כפנוי' : '✋ סמן כמלא'}</button>` : ''}
         ${canEdit ? `<button class="ride-btn danger" onclick="deleteRide('${r.id}')">🗑️ הסר</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderRideRequests() {
+  const box = document.getElementById('rideReqList');
+  if (!box) return;
+  if (!rideRequests.length) {
+    box.innerHTML = '<p style="color:#bbb;font-size:0.85rem;text-align:center;padding:0.5rem">אף אחד לא מחפש טרמפ כרגע 🙂</p>';
+    return;
+  }
+  const msg = encodeURIComponent('היי! ראיתי שאתם מחפשים טרמפ למסיבת חוף הצוק – יש לי מקום');
+  box.innerHTML = [...rideRequests].sort((a, b) => (a.ts || 0) - (b.ts || 0)).map(r => {
+    const canDel = currentUser === 'מנהל' || r.name === currentUser;
+    return `<div class="req-card">
+      <div class="ride-top">
+        <span class="ride-driver">🙋 ${esc(r.name)}</span>
+        <span class="ride-from">📍 צריך טרמפ מ${esc(r.from)}</span>
+      </div>
+      <div class="ride-actions">
+        <a class="ride-btn wa" href="https://wa.me/${r.phone}?text=${msg}" target="_blank" rel="noopener">💬 וואטסאפ</a>
+        <a class="ride-btn tg" href="https://t.me/+${r.phone}" target="_blank" rel="noopener">✈️ טלגרם</a>
+        <span class="ride-btn ghost" style="cursor:default">📞 ${prettyPhone(r.phone)}</span>
+        ${canDel ? `<button class="ride-btn danger" onclick="deleteRideRequest('${r.id}')">🗑️ הסר</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -792,7 +1004,7 @@ function renderItem(item) {
   const canCancel = isMeIn && myEntry && myEntry.ts && myEntry.ts > 0 && (Date.now() - myEntry.ts) < 60000;
   const pct = Math.round((filled / effectiveSlots) * 100);
   const tagsHtml = volunteers.length > 0
-    ? `<div class="volunteers">${volunteers.map(n => `<span class="volunteer-tag ${n === currentUser ? 'is-me' : ''}">${esc(n)}</span>`).join('')}</div>` : '';
+    ? `<div class="volunteers">${volunteers.map(n => `<span class="volunteer-tag ${n === currentUser ? 'is-me' : ''}">${esc(n)}${contactLinks(n)}</span>`).join('')}</div>` : '';
   const noteText = itemNotes[item.id] || '';
   const noteHtml = (noteText && currentUser === 'מנהל') ? `<div style="font-size:0.78rem;color:var(--brown);margin-top:0.4rem">📝 ${esc(noteText)}</div>` : '';
   const isAdmin = currentUser === 'מנהל';
@@ -1027,12 +1239,14 @@ function renderHowto() {
        ההערות שאתה מוסיף גלויות רק לך.</div>`
     : `<b>👋 איך זה עובד?</b>
        <ol>
-         <li>רשמו את שמכם בשדה למטה</li>
+         <li>רשמו <b>שם וטלפון</b> בשדות למטה (הטלפון נדרש כדי שאפשר יהיה לתאם איתכם)</li>
          <li>לחצו <b>"אני מביא"</b> ליד כל דבר שאתם מביאים</li>
          <li>מביאים משהו שלא ברשימה? הוסיפו אותו ב<b>"הוספה חופשית"</b></li>
+         <li>צריכים או מציעים טרמפ? יש לוח טרמפים בתחתית הדף 🚗</li>
        </ol>
        <div class="note">⏱️ אפשר לבטל או לשנות עד <b>דקה</b> מרגע ההרשמה.
-       אחרי זה — שלחו הודעה למנהל, רק הוא יכול לשנות.</div>`;
+       אחרי זה — שלחו הודעה למנהל, רק הוא יכול לשנות.<br>
+       🔒 אפשר להסתיר את הטלפון מהאחרים — אבל אז לא תוכלו להשתמש בלוח הטרמפים.</div>`;
 }
 
 
