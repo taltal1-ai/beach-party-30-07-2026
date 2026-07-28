@@ -606,15 +606,55 @@ async function initDB() {
   }
 }
 
-onSnapshot(docRef, (snap) => { if (snap.exists()) { state = snap.data(); renderItems(); } });
-onSnapshot(freeRef, (snap) => { if (snap.exists()) { freeItems = snap.data().items || []; renderFreeItems(); } });
-onSnapshot(slotsRef, (snap) => { if (snap.exists()) { slotsState = snap.data(); renderItems(); } });
-onSnapshot(extraItemsRef, (snap) => { if (snap.exists()) { extraItems = snap.data().items || []; renderItems(); } });
-onSnapshot(itemNotesRef, (snap) => { if (snap.exists()) { itemNotes = snap.data(); renderItems(); } });
-onSnapshot(hiddenRef, (snap) => { hiddenIds = snap.exists() ? (snap.data().ids || []) : []; renderItems(); updateAdminPanel(); });
-onSnapshot(ridesRef, (snap) => { rides = snap.exists() ? (snap.data().items || []) : []; renderRides(); });
-onSnapshot(rideReqRef, (snap) => { rideRequests = snap.exists() ? (snap.data().items || []) : []; renderRides(); });
-onSnapshot(contactsRef, (snap) => { contacts = snap.exists() ? snap.data() : {}; renderItems(); renderRides(); });
+// ── מאזינים בזמן אמת + חיסכון במכסת הקריאות ──
+// כל כתיבה נשלחת לכל מאזין פעיל ונספרת כקריאה. מי שמשאיר את הדף פתוח ברקע
+// צורך מכסה בלי להסתכל, ולכן מנתקים אותו אחרי דקה של חוסר-פעילות ומחברים בחזרה
+// כשהוא חוזר. חיבור מחדש עולה 9 קריאות, ולכן יש השהיה — כדי שמעבר קצר בין
+// טאבים לא יעלה יותר ממה שהוא חוסך.
+const LISTENER_SPECS = [
+  [() => docRef,        (snap) => { if (snap.exists()) { state = snap.data(); renderItems(); } }],
+  [() => freeRef,       (snap) => { if (snap.exists()) { freeItems = snap.data().items || []; renderFreeItems(); } }],
+  [() => slotsRef,      (snap) => { if (snap.exists()) { slotsState = snap.data(); renderItems(); } }],
+  [() => extraItemsRef, (snap) => { if (snap.exists()) { extraItems = snap.data().items || []; renderItems(); } }],
+  [() => itemNotesRef,  (snap) => { if (snap.exists()) { itemNotes = snap.data(); renderItems(); } }],
+  [() => hiddenRef,     (snap) => { hiddenIds = snap.exists() ? (snap.data().ids || []) : []; renderItems(); updateAdminPanel(); }],
+  [() => ridesRef,      (snap) => { rides = snap.exists() ? (snap.data().items || []) : []; renderRides(); }],
+  [() => rideReqRef,    (snap) => { rideRequests = snap.exists() ? (snap.data().items || []) : []; renderRides(); }],
+  [() => contactsRef,   (snap) => { contacts = snap.exists() ? snap.data() : {}; renderItems(); renderRides(); }],
+];
+
+let unsubs = [];
+const IDLE_MS = 60000;
+let idleTimer = null;
+
+function attachListeners() {
+  if (unsubs.length) return;
+  unsubs = LISTENER_SPECS.map(([ref, cb]) => onSnapshot(ref(), cb));
+  setLiveStatus(true);
+}
+
+function detachListeners() {
+  unsubs.forEach(u => { try { u(); } catch (e) {} });
+  unsubs = [];
+  setLiveStatus(false);
+}
+
+function setLiveStatus(live) {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  if (!dot || !txt) return;
+  if (dot.className.includes('error')) return;   // לא לדרוס הודעת שגיאת חיבור
+  dot.className = 'status-dot' + (live ? ' connected' : '');
+  txt.textContent = live ? 'מחובר – מתעדכן בזמן אמת 🟢' : 'מושהה – חזרו לטאב כדי להתעדכן 💤';
+}
+
+document.addEventListener('visibilitychange', () => {
+  clearTimeout(idleTimer);
+  if (document.hidden) idleTimer = setTimeout(detachListeners, IDLE_MS);
+  else attachListeners();
+});
+
+attachListeners();
 
 // ── פרטי קשר ──
 // המנהל הוא היחיד שנכנס בלי טלפון (הוא לא נרשם להביא ולא מציע טרמפים)
