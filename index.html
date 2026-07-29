@@ -1175,7 +1175,14 @@ const OPEN_CALL_MIN = 50;
 const RLM = String.fromCharCode(0x200F);   // מאלץ וואטסאפ ליישר את השורה מימין לשמאל
 
 window.copyToClipboard = function() {
-  const lines = ['☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*', '📍 חוף הצוק', ''];
+  // הקישור למעלה בכוונה — וואטסאפ מקפל הודעות ארוכות מאחורי "קרא עוד",
+  // והרשימה ארוכה מספיק כדי ששורה תחתונה לא תיראה בלי לחיצה
+  const lines = [
+    '☮️ *מסיבת חוף הצוק – חמישי 30.7 ⏰ 18:00*',
+    '📍 חוף הצוק',
+    '👉 להירשם: https://taltal1-ai.github.io/beach-party-30-07-2026/',
+    ''
+  ];
   const missing = [];
   getAllItems().forEach(item => {
     const raw = state[item.id] || [];
@@ -1203,7 +1210,6 @@ window.copyToClipboard = function() {
     lines.push('', '🚗 *טרמפים:*');
     rides.forEach(r => { lines.push(`• ${r.name} – מ${r.from} ${r.full ? '(מלא)' : `(${r.seats || 1} מקומות)`} – ${prettyPhone(r.phone)}`); });
   }
-  lines.push('', '👉 להירשם: https://taltal1-ai.github.io/beach-party-30-07-2026/');
   // RLM בראש כל שורה — בלעדיו וואטסאפ מיישר לשמאל, כי השורות מתחילות באמוג'י או ב-• שהם ניטרליים
   const text = lines.map(l => l ? RLM + l : l).join(String.fromCharCode(10));
   navigator.clipboard.writeText(text).then(() => {
