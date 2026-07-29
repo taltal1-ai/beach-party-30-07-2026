@@ -446,7 +446,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYSvYFTkCMLYFhaRPz3LQyzH2f2lukLbw",
@@ -505,6 +505,7 @@ const rideReqRef = doc(db, EVENT_COLLECTION, 'rideRequests');
 let rideRequests = [];
 // פרטי קשר לפי שם: { "<שם>": {phone, hidden} }
 const contactsRef = doc(db, EVENT_COLLECTION, 'contacts');
+const statsRef = doc(db, EVENT_COLLECTION, 'stats');
 let contacts = {};
 let slotsState = {};
 let extraItems = []; // [{id,name,cat,slots}]
@@ -711,6 +712,9 @@ window.setName = async function() {
     const taken = contacts[val];
     const selfEdit = changingName && currentUser === val;   // עריכת הפרטים של עצמי — מותרת
     if (taken && taken.phone && taken.phone !== phone && !selfEdit) {
+      // מונה אטומי בלבד, בלי לשמור שם או טלפון. כשל בסטטיסטיקה לא חוסם את המשתמש.
+      void setDoc(statsRef, { phoneOverwritePreventions: increment(1) }, { merge: true })
+        .catch(e => console.warn('Could not record prevented phone overwrite:', e));
       const err = document.getElementById('nameError');
       err.innerHTML = `השם <b>"${esc(val)}"</b> כבר בשימוש של מישהו אחר. הוסיפו שם משפחה או כינוי כדי להבדיל 🙏
         <br>אם זה בכל זאת אתם — ודאו שהקלדתם את מספר הטלפון שלכם נכון.`;
