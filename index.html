@@ -1210,6 +1210,9 @@ window.copyToClipboard = function() {
     lines.push('', '🚗 *טרמפים:*');
     rides.forEach(r => { lines.push(`• ${r.name} – מ${r.from} ${r.full ? '(מלא)' : `(${r.seats || 1} מקומות)`} – ${prettyPhone(r.phone)}`); });
   }
+  // שורת סיום קצרה: וואטסאפ מציב את השעה והוי-וי על השורה האחרונה, ואם היא ארוכה
+  // (שם + מקום + טלפון) היא נשברת ונראית מוזחת. שורה קצרה פותרת את זה.
+  lines.push('', '🌊 נתראה בחוף!');
   // RLM בראש כל שורה — בלעדיו וואטסאפ מיישר לשמאל, כי השורות מתחילות באמוג'י או ב-• שהם ניטרליים
   const text = lines.map(l => l ? RLM + l : l).join(String.fromCharCode(10));
   navigator.clipboard.writeText(text).then(() => {
